@@ -15,6 +15,15 @@
 
 ## Examples
 
+## Contributing
+
+Build the `jsx` source files and then build/run the example application to test it out.
+
+```
+$ npm run build
+$ npm run test
+```
+
 
 ## License
 [MIT](https://opensource.org/licenses/MIT)
