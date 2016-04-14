@@ -1,0 +1,26 @@
+{
+  "name": "material-paper",
+  "version": "0.0.1",
+  "description": "React Components inspired by Google's Material Design.",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "babel ./src/raw --out-dir ./src/lib",
+    "lint": "eslint src/**/*.js",
+    "ci": "node --harmony unit/*.js"
+  },
+  "author": "Nick Zuber <zuber.nicholas@gmail.com>",
+  "license": "MIT",
+  "keywords": [
+    "material-ui",
+    "material",
+    "ui",
+    "paper",
+    "material-paper"
+  ],
+  "dependencies": {
+    "react": "^15.0.1"
+  },
+  "devDependencies": {
+    "babel-plugin-transform-react-jsx": "^6.7.5"
+  }
+}

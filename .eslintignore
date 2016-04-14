@@ -1,0 +1,6 @@
+build
+node_modules
+examples/scripts
+*.json
+*.md
+LICENSE
