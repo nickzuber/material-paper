@@ -16,7 +16,6 @@ var __extends = this && this.__extends || function (d, b) {
     if (b.hasOwnProperty(p)) {
       d[p] = b[p];
     }
-    console.log('__extends');
   }
   function __() {
     this.constructor = d;
@@ -195,15 +194,21 @@ const Paper = React.createClass({
 
   render: function () {
 
+    // TODO: __extends is causing a Uncaught RangeError: Maximum call stack size exceeded
+    //       Consider editing this function to perform only shallow copies.
+
     var gradientColor = {};
     var backgroundProperties = {};
     var baseStyles = {};
     var burstColor = {};
 
-    __extends(backgroundProperties, Styles.midBottomLevel);
-    __extends(backgroundProperties, Styles.background);
+    //__extends(backgroundProperties, Styles.midBottomLevel);
+    //__extends(backgroundProperties, Styles.background);
+    Object.assign(backgroundProperties, Styles.midBottomLevel);
+    Object.assign(backgroundProperties, Styles.background);
 
-    __extends(gradientColor, Styles.midUpperLevel);
+    //__extends(gradientColor, Styles.midUpperLevel);
+    Object.assign(gradientColor, Styles.midUpperLevel);
 
     if (this.props.backgroundColor) {
       backgroundProperties.backgroundColor = this.props.backgroundColor;
@@ -213,7 +218,8 @@ const Paper = React.createClass({
     }
     if (this.props.style) {
       baseStyles = Styles.bottomLevel;
-      __extends(baseStyles, this.props.style);
+      //__extends(baseStyles, this.props.style);
+      Object.assign(baseStyles, this.props.style);
     }
 
     return React.createElement(

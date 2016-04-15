@@ -195,15 +195,24 @@ const Paper = React.createClass({
 
   render: function(){
 
+    // TODO: __extends is causing a Uncaught RangeError: Maximum call stack size exceeded
+    //       Consider editing this function to perform only shallow copies.
+    // EDIT: Implemented shallow copying with Object.assign().
+    //       Not sure how stable or widely support this function is, might
+    //       make a custom version.
+
     var gradientColor = {};
     var backgroundProperties = {};
     var baseStyles = {};
     var burstColor = {};
 
-    __extends(backgroundProperties, Styles.midBottomLevel);
-    __extends(backgroundProperties, Styles.background);
+    //__extends(backgroundProperties, Styles.midBottomLevel);
+    //__extends(backgroundProperties, Styles.background);
+    Object.assign(backgroundProperties, Styles.midBottomLevel);
+    Object.assign(backgroundProperties, Styles.background);
 
-    __extends(gradientColor, Styles.midUpperLevel);
+    //__extends(gradientColor, Styles.midUpperLevel);
+    Object.assign(gradientColor, Styles.midUpperLevel);
 
     if(this.props.backgroundColor){
       backgroundProperties.backgroundColor = this.props.backgroundColor;
@@ -213,7 +222,8 @@ const Paper = React.createClass({
     }
     if(this.props.style){
       baseStyles = Styles.bottomLevel;
-      __extends(baseStyles, this.props.style);
+      //__extends(baseStyles, this.props.style);
+      Object.assign(baseStyles, this.props.style);
     }
 
     return(
