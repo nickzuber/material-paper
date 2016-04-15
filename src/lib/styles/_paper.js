@@ -7,7 +7,7 @@
 exports = module.exports = {
 
   bottomLevel: {
-    background: '#7D7D7D',
+    background: '#fff',
     width: '50%',
     minHeight: '500px',
     position: 'relative',
@@ -16,7 +16,7 @@ exports = module.exports = {
     margin: 0,
     fontSize: '16px',
     borderRadius: '2px',
-    boxShadow: '0 5px 20px rgba(0,0,0,0.12),0 4px 11px rgba(0,0,0,0.23)'
+    boxShadow: '0 1px 6px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.24)'
   },
 
   midUpperLevel: {
@@ -58,7 +58,7 @@ exports = module.exports = {
     left: 0,
     zIndex: 2000,
     textDecoration: 'none',
-    color: '#fff'
+    color: 'rgba(23, 23, 23, 0.87)'
   },
 
   topLevel: {

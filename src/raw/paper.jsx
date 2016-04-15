@@ -126,7 +126,7 @@ const Paper = React.createClass({
     burstDOM.setAttribute('data-burst-token', this.state.token);
 
     // TODO: Make burst styles more paper specific
-    burstDOM.style.background = 'rgba(255,255,255,.35)';
+    burstDOM.style.background = 'rgba(0,0,0,.09)';
     burstDOM.style.borderRadius = '100%';
     burstDOM.style.height = '50px';
     burstDOM.style.width = '50px';

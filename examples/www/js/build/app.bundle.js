@@ -20070,7 +20070,7 @@
 	        React.createElement(Paper, {
 	          title: "Some Header", 
 	              description: "Just some somewhat brief description of what this is.", 
-	              backgroundColor: "rgb(222, 79, 79)", 
+	              backgroundColor: "#fff", 
 	              style: {
 	                'margin': '50px auto 50px',
 	                'display': 'block'
@@ -20237,7 +20237,7 @@
 	    burstDOM.setAttribute('data-burst-token', this.state.token);
 
 	    // TODO: Make burst styles more paper specific
-	    burstDOM.style.background = 'rgba(255,255,255,.35)';
+	    burstDOM.style.background = 'rgba(0,0,0,.09)';
 	    burstDOM.style.borderRadius = '100%';
 	    burstDOM.style.height = '50px';
 	    burstDOM.style.width = '50px';
@@ -20305,6 +20305,9 @@
 
 	    // TODO: __extends is causing a Uncaught RangeError: Maximum call stack size exceeded
 	    //       Consider editing this function to perform only shallow copies.
+	    // EDIT: Implemented shallow copying with Object.assign().
+	    //       Not sure how stable or widely support this function is, might
+	    //       make a custom version.
 
 	    var gradientColor = {};
 	    var backgroundProperties = {};
@@ -20380,7 +20383,7 @@
 	exports = module.exports = {
 
 	  bottomLevel: {
-	    background: '#7D7D7D',
+	    background: '#fff',
 	    width: '50%',
 	    minHeight: '500px',
 	    position: 'relative',
@@ -20389,7 +20392,7 @@
 	    margin: 0,
 	    fontSize: '16px',
 	    borderRadius: '2px',
-	    boxShadow: '0 5px 20px rgba(0,0,0,0.12),0 4px 11px rgba(0,0,0,0.23)'
+	    boxShadow: '0 1px 6px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.24)'
 	  },
 
 	  midUpperLevel: {
@@ -20431,7 +20434,7 @@
 	    left: 0,
 	    zIndex: 2000,
 	    textDecoration: 'none',
-	    color: '#fff'
+	    color: 'rgba(23, 23, 23, 0.87)'
 	  },
 
 	  topLevel: {

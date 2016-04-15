@@ -128,7 +128,7 @@ const Paper = React.createClass({
     burstDOM.setAttribute('data-burst-token', this.state.token);
 
     // TODO: Make burst styles more paper specific
-    burstDOM.style.background = 'rgba(255,255,255,.35)';
+    burstDOM.style.background = 'rgba(0,0,0,.09)';
     burstDOM.style.borderRadius = '100%';
     burstDOM.style.height = '50px';
     burstDOM.style.width = '50px';
@@ -196,6 +196,9 @@ const Paper = React.createClass({
 
     // TODO: __extends is causing a Uncaught RangeError: Maximum call stack size exceeded
     //       Consider editing this function to perform only shallow copies.
+    // EDIT: Implemented shallow copying with Object.assign().
+    //       Not sure how stable or widely support this function is, might
+    //       make a custom version.
 
     var gradientColor = {};
     var backgroundProperties = {};

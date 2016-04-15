@@ -23,7 +23,7 @@ const app = React.createClass({
         <Paper
           title='Some Header'
               description='Just some somewhat brief description of what this is.'
-              backgroundColor='rgb(222, 79, 79)'
+              backgroundColor='#fff'
               style={{
                 'margin': '50px auto 50px',
                 'display': 'block'
