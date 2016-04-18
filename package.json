@@ -8,7 +8,7 @@
     "lint": "eslint src/**/*.js",
     "ci": "node --harmony unit/*.js",
     "run": "gulp examples && node examples/app",
-    "serve": "babel ./src/raw --out-dir ./src/lib && gulp examples && node examples/app"
+    "serve": "babel ./src --out-dir ./build && gulp examples && node examples/app"
   },
   "author": "Nick Zuber <zuber.nicholas@gmail.com>",
   "license": "MIT",

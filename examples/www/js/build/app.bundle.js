@@ -20064,10 +20064,17 @@
 	var paperSettings = {
 	  background: '#fff',
 	  style: {
-	    'margin': '50px auto 50px',
-	    'display': 'block'
+	    'margin'   : '50px auto 50px',
+	    'display'  : 'block',
+	    'height'   : '30px',
+	    'width'    : '200px'
 	  },
-	  burstSpeed: 1500
+	  overlayColor : undefined,
+	  burstSpeed   : undefined,
+	  burstColor   : undefined,
+	  clickable    : true,
+	  liftOnHover  : false,
+	  liftOnClick  : true,
 	}
 
 	// Construct React component
@@ -20076,17 +20083,8 @@
 	  render: function(){
 	    return(
 	      React.createElement("div", null, 
-	        React.createElement(Paper, {
-	          settings: paperSettings, 
-
-	          background: "#fff", 
-	          style: {
-	            'margin': '50px auto 50px',
-	            'display': 'block'
-	          }
-	          }, 
-	            React.createElement("h1", null, "Header"), 
-	            React.createElement("p", null, "Paragraph text and some more words and stuff.")
+	        React.createElement(Paper, {settings: paperSettings}, 
+	            React.createElement("p", null, "Click me")
 	          )
 	      )
 	    );
@@ -20125,6 +20123,7 @@
 
 	// Styles
 	const Styles = __webpack_require__(169);
+	const UtilStyles = __webpack_require__(170);
 
 	/**
 	 * Extends an object with the properties of another.
@@ -20215,6 +20214,7 @@
 	  },
 
 	  _setEventHandler: function () {
+	    if (!this.props.settings.clickable) return;
 	    if (typeof window !== 'undefined') {
 	      window.addEventListener('mouseup', function (e) {
 	        var existingBurstDOM = document.querySelector('.panel-burst');
@@ -20227,16 +20227,31 @@
 	  },
 
 	  _onMouseOver: function () {
+	    if (!this.props.settings.clickable) return;
 	    var backgroundDOM = document.querySelector('.panel-base[data-token="' + this.state.token + '"] .panel-background');
 	    //backgroundDOM.style.transform = 'scale(1.05)';
+
+	    // Lift up
+	    if (this.props.settings.liftOnHover) {
+	      var baseDOM = document.querySelector('.panel-base[data-token="' + this.state.token + '"]');
+	      baseDOM.style.boxShadow = UtilStyles.zDepth.one.boxShadow;
+	    }
 	  },
 
 	  _onMouseOut: function () {
+	    if (!this.props.settings.clickable) return;
 	    var backgroundDOM = document.querySelector('.panel-base[data-token="' + this.state.token + '"] .panel-background');
 	    //backgroundDOM.style.transform = 'scale(1)';
+
+	    // Lift back down
+	    if (this.props.settings.liftOnHover) {
+	      var baseDOM = document.querySelector('.panel-base[data-token="' + this.state.token + '"]');
+	      baseDOM.style.boxShadow = UtilStyles.zDepth.zero.boxShadow;
+	    }
 	  },
 
 	  _onMouseDown: function (e) {
+	    if (!this.props.settings.clickable) return;
 	    e.preventDefault();
 
 	    // Target base nodes
@@ -20265,7 +20280,7 @@
 	    burstDOM.style.zIndex = '1500';
 	    burstDOM.style.transform = 'scale(0)';
 
-	    this.props.burstColor ? burstDOM.style.background = this.props.burstColor : 0;
+	    this.props.settings.burstColor ? burstDOM.style.background = this.props.settings.burstColor : 0;
 
 	    // Attach to panel
 	    baseDOM.appendChild(burstDOM);
@@ -20275,10 +20290,18 @@
 	    burstDOM.style.top = e.clientY - baseDOMCoords.y - burstSize / 2 + 'px';
 	    burstDOM.style.left = e.clientX - baseDOMCoords.x - burstSize / 2 + 'px';
 
+	    // Lift up
+	    if (this.props.settings.liftOnClick) {
+	      var baseDOM = document.querySelector('.panel-base[data-token="' + this.state.token + '"]');
+	      baseDOM.style.boxShadow = UtilStyles.zDepth.one.boxShadow;
+	    }
+
 	    this._animate(this.props.settings.burstSpeed);
 	  },
 
 	  _animate: function (timing) {
+	    if (!this.props.settings.clickable) return;
+
 	    var burstDOM = document.querySelector('.panel-burst[data-burst-token="' + this.state.token + '"]');
 	    if (!burstDOM) {
 	      return 0;
@@ -20291,6 +20314,8 @@
 	  },
 
 	  _burst: function (timing) {
+	    if (!this.props.settings.clickable) return;
+
 	    var burstDOM = document.querySelector('.panel-burst[data-burst-token="' + this.state.token + '"]');
 	    if (!burstDOM) {
 	      return 0;
@@ -20304,7 +20329,7 @@
 	    var burstDistance = largerDimension / burstDimensions;
 	    burstDistance *= 1.5;
 
-	    var timing = timing || 500;
+	    var timing = timing || 1250;
 
 	    // Burst animation
 	    burstDOM.style.transition = 'all ' + timing + 'ms cubic-bezier(0.23, 1, 0.32, 1) 0s';
@@ -20318,7 +20343,16 @@
 	  },
 
 	  _onMouseUp: function () {
-	    this._burst(1250);
+	    if (!this.props.settings.clickable) return;
+
+	    // Lift back down
+	    if (this.props.settings.liftOnClick) {
+	      var baseDOM = document.querySelector('.panel-base[data-token="' + this.state.token + '"]');
+	      baseDOM.style.boxShadow = UtilStyles.zDepth.zero.boxShadow;
+	    }
+
+	    // Burst
+	    this._burst(this.props.settings.burstSpeed);
 	  },
 
 	  render: function () {
@@ -20342,9 +20376,11 @@
 	    //   style            : custom style attribute for base paper
 	    //   burstSpeed       : (ms) the speed at which the bursting animates
 	    //   burstColor       : the color of the burst
+	    //   clickable        : the ability to click paper like a button
 
 	    var overlayColor = {};
 	    var backgroundProperties = {};
+	    var topLevelStyles = {};
 	    var baseStyles = {};
 	    var burstColor = {};
 
@@ -20353,15 +20389,20 @@
 
 	    Object.assign(overlayColor, Styles.midUpperLevel);
 
-	    if (this.props.background) {
+	    if (this.props.settings.background) {
 	      backgroundProperties.background = this.props.settings.background;
 	    }
-	    if (this.props.overlayColor) {
-	      overlayColor.background = this.props.overlayColor;
+	    if (this.props.settings.overlayColor) {
+	      overlayColor.background = this.props.settings.overlayColor;
 	    }
-	    if (this.props.style) {
+	    if (this.props.settings.style) {
 	      baseStyles = Styles.bottomLevel;
-	      Object.assign(baseStyles, this.props.style);
+	      Object.assign(baseStyles, UtilStyles.zDepth.zero);
+	      Object.assign(baseStyles, this.props.settings.style);
+	    }
+	    if (this.props.settings.clickable) {
+	      topLevelStyles = { 'cursor': 'pointer' };
+	      Object.assign(topLevelStyles, Styles.topLevel);
 	    }
 
 	    return React.createElement(
@@ -20376,11 +20417,10 @@
 	          onMouseOver: this._onMouseOver,
 	          onMouseOut: this._onMouseOut,
 	          className: 'panel-link -panel-item',
-	          style: Styles.link,
-	          href: 'javascript:void(0);' },
+	          style: Styles.link },
 	        React.createElement(
 	          'div',
-	          { className: 'panel-top-level -panel-item', style: Styles.topLevel },
+	          { className: 'panel-top-level -panel-item', style: topLevelStyles },
 	          this.props.children
 	        )
 	      )
@@ -20405,15 +20445,14 @@
 
 	  bottomLevel: {
 	    background: '#fff',
-	    width: '50%',
-	    minHeight: '500px',
+	    width: '100px',
+	    height: '100px',
 	    position: 'relative',
 	    overflow: 'hidden',
 	    display: 'inline-block',
 	    margin: 0,
 	    fontSize: '16px',
 	    borderRadius: '2px',
-	    boxShadow: '0 1px 6px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.24)',
 	    transition: 'all 500ms cubic-bezier(0.23, 1, 0.32, 1) 0s'
 	  },
 
@@ -20466,9 +20505,37 @@
 	    overflow: 'hidden',
 	    left: 0,
 	    zIndex: 2000,
-	    padding: '5% 10%',
 	    boxSizing: 'border-box',
 	    borderRadius: '2px'
+	  }
+
+	};
+
+/***/ },
+/* 170 */
+/***/ function(module, exports) {
+
+	exports = module.exports = {
+
+	  zDepth: {
+	    none: {
+	      boxShadow: '0 0 0 rgba(0, 0, 0, 0), 0 0 0 rgba(0, 0, 0, 0)'
+	    },
+	    zero: {
+	      boxShadow: '0 1px 6px rgba(0,0,0,0.12), 0 1px 4px rgba(0,0,0,0.12)'
+	    },
+	    one: {
+	      boxShadow: '0 3px 10px rgba(0,0,0,0.16), 0 3px 10px rgba(0,0,0,0.23)'
+	    },
+	    two: {
+	      boxShadow: '0 10px 30px rgba(0,0,0,0.19), 0 6px 10px rgba(0,0,0,0.23)'
+	    },
+	    three: {
+	      boxShadow: '0 14px 45px rgba(0,0,0,0.25), 0 10px 18px rgba(0,0,0,0.22)'
+	    },
+	    four: {
+	      boxShadow: '0 19px 60px rgba(0,0,0,0.3), 0 15px 20px rgba(0,0,0,0.22)'
+	    }
 	  }
 
 	};

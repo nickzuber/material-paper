@@ -4,6 +4,7 @@ const React = require('react');
 
 // Styles
 const Styles = require('./styles/paper.stl');
+const UtilStyles = require('./styles/utils.stl');
 
 /**
  * Extends an object with the properties of another.
@@ -94,6 +95,7 @@ const Paper = React.createClass({
   },
 
   _setEventHandler: function(){
+    if(!this.props.settings.clickable) return;
     if(typeof window !== 'undefined'){
       window.addEventListener('mouseup', function(e){
         var existingBurstDOM = document.querySelector('.panel-burst');
@@ -106,16 +108,31 @@ const Paper = React.createClass({
   },
 
   _onMouseOver: function(){
+    if(!this.props.settings.clickable) return;
     var backgroundDOM = document.querySelector('.panel-base[data-token="'+this.state.token+'"] .panel-background');
     //backgroundDOM.style.transform = 'scale(1.05)';
+
+    // Lift up
+    if(this.props.settings.liftOnHover){
+      var baseDOM = document.querySelector('.panel-base[data-token="'+this.state.token+'"]');
+      baseDOM.style.boxShadow = UtilStyles.zDepth.one.boxShadow;
+    }
   },
 
   _onMouseOut: function(){
+    if(!this.props.settings.clickable) return;
     var backgroundDOM = document.querySelector('.panel-base[data-token="'+this.state.token+'"] .panel-background');
     //backgroundDOM.style.transform = 'scale(1)';
+
+    // Lift back down
+    if(this.props.settings.liftOnHover){
+      var baseDOM = document.querySelector('.panel-base[data-token="'+this.state.token+'"]');
+      baseDOM.style.boxShadow = UtilStyles.zDepth.zero.boxShadow;
+    }
   },
 
   _onMouseDown: function(e){
+    if(!this.props.settings.clickable) return;
     e.preventDefault();
 
     // Target base nodes
@@ -144,7 +161,7 @@ const Paper = React.createClass({
     burstDOM.style.zIndex = '1500';
     burstDOM.style.transform = 'scale(0)';
 
-    this.props.burstColor ? burstDOM.style.background = this.props.burstColor : 0;
+    this.props.settings.burstColor ? burstDOM.style.background = this.props.settings.burstColor : 0;
 
     // Attach to panel
     baseDOM.appendChild(burstDOM);
@@ -154,12 +171,19 @@ const Paper = React.createClass({
     burstDOM.style.top = (e.clientY - baseDOMCoords.y - (burstSize/2))+'px';
     burstDOM.style.left = (e.clientX - baseDOMCoords.x - (burstSize/2))+'px';
 
+    // Lift up
+    if(this.props.settings.liftOnClick){
+      var baseDOM = document.querySelector('.panel-base[data-token="'+this.state.token+'"]');
+      baseDOM.style.boxShadow = UtilStyles.zDepth.one.boxShadow;
+    }
 
     this._animate(this.props.settings.burstSpeed);
 
   },
 
   _animate: function(timing){
+    if(!this.props.settings.clickable) return;
+
     var burstDOM = document.querySelector('.panel-burst[data-burst-token="'+this.state.token+'"]');
     if(!burstDOM){
       return 0;
@@ -172,6 +196,8 @@ const Paper = React.createClass({
   },
 
   _burst:function(timing){
+    if(!this.props.settings.clickable) return;
+
     var burstDOM = document.querySelector('.panel-burst[data-burst-token="'+this.state.token+'"]');
     if(!burstDOM){
       return 0;
@@ -185,7 +211,7 @@ const Paper = React.createClass({
     var burstDistance = largerDimension / burstDimensions;
     burstDistance *= 1.5;
 
-    var timing = timing || 500;
+    var timing = timing || 1250;
 
     // Burst animation
     burstDOM.style.transition = 'all '+timing+'ms cubic-bezier(0.23, 1, 0.32, 1) 0s';
@@ -199,7 +225,16 @@ const Paper = React.createClass({
   },
 
   _onMouseUp: function(){
-    this._burst(1250);
+    if(!this.props.settings.clickable) return;
+
+    // Lift back down
+    if(this.props.settings.liftOnClick){
+      var baseDOM = document.querySelector('.panel-base[data-token="'+this.state.token+'"]');
+      baseDOM.style.boxShadow = UtilStyles.zDepth.zero.boxShadow;
+    }
+
+    // Burst
+    this._burst(this.props.settings.burstSpeed);
   },
 
   render: function(){
@@ -223,9 +258,11 @@ const Paper = React.createClass({
     //   style            : custom style attribute for base paper
     //   burstSpeed       : (ms) the speed at which the bursting animates
     //   burstColor       : the color of the burst
+    //   clickable        : the ability to click paper like a button
 
     var overlayColor = {}; 
     var backgroundProperties = {};
+    var topLevelStyles = {};
     var baseStyles = {};
     var burstColor = {};
 
@@ -234,15 +271,20 @@ const Paper = React.createClass({
 
     Object.assign(overlayColor, Styles.midUpperLevel);
 
-    if(this.props.background){
+    if(this.props.settings.background){
       backgroundProperties.background = this.props.settings.background;
     }
-    if(this.props.overlayColor){
-      overlayColor.background = this.props.overlayColor;
+    if(this.props.settings.overlayColor){
+      overlayColor.background = this.props.settings.overlayColor;
     }
-    if(this.props.style){
+    if(this.props.settings.style){
       baseStyles = Styles.bottomLevel;
-      Object.assign(baseStyles, this.props.style);
+      Object.assign(baseStyles, UtilStyles.zDepth.zero);
+      Object.assign(baseStyles, this.props.settings.style);
+    }
+    if(this.props.settings.clickable){
+      topLevelStyles = {'cursor':'pointer'};
+      Object.assign(topLevelStyles, Styles.topLevel);
     }
 
     return(
@@ -254,9 +296,8 @@ const Paper = React.createClass({
            onMouseOver={this._onMouseOver}
            onMouseOut={this._onMouseOut}
            className="panel-link -panel-item" 
-           style={Styles.link}
-           href="javascript:void(0);">
-          <div className="panel-top-level -panel-item" style={Styles.topLevel}>
+           style={Styles.link}>
+          <div className="panel-top-level -panel-item" style={topLevelStyles}>
             {this.props.children}
           </div>
         </a>

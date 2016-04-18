@@ -8,15 +8,14 @@ exports = module.exports = {
 
   bottomLevel: {
     background: '#fff',
-    width: '50%',
-    minHeight: '500px',
+    width: '100px',
+    height: '100px',
     position: 'relative',
     overflow: 'hidden',
     display: 'inline-block',
     margin: 0,
     fontSize: '16px',
     borderRadius: '2px',
-    boxShadow: '0 1px 6px rgba(0, 0, 0, 0.12), 0 1px 4px rgba(0, 0, 0, 0.24)',
     transition: 'all 500ms cubic-bezier(0.23, 1, 0.32, 1) 0s'
   },
 
@@ -69,7 +68,6 @@ exports = module.exports = {
     overflow: 'hidden',
     left: 0,
     zIndex: 2000,
-    padding: '5% 10%',
     boxSizing: 'border-box',
     borderRadius: '2px'
   }
