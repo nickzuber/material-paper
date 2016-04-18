@@ -2,12 +2,12 @@
   "name": "material-paper",
   "version": "0.0.1",
   "description": "React Components inspired by Google's Material Design.",
-  "main": "src/index.js",
+  "main": "build/index.js",
   "scripts": {
-    "build": "babel ./src/raw --out-dir ./src/lib",
+    "build": "babel ./src --out-dir ./build",
     "lint": "eslint src/**/*.js",
     "ci": "node --harmony unit/*.js",
-    "test": "gulp examples && node examples/app",
+    "run": "gulp examples && node examples/app",
     "serve": "babel ./src/raw --out-dir ./src/lib && gulp examples && node examples/app"
   },
   "author": "Nick Zuber <zuber.nicholas@gmail.com>",

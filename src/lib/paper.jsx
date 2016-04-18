@@ -3,7 +3,7 @@
 const React = require('react');
 
 // Styles
-const Styles = require('./styles/_paper');
+const Styles = require('./styles/paper.stl');
 
 /**
  * Extends an object with the properties of another.
@@ -17,7 +17,9 @@ var __extends = (this && this.__extends) || function (d, b) {
         d[p] = b[p];
       }
     }
-    function __() { this.constructor = d; }
+    function __() {
+      this.constructor = d;
+    }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 
@@ -130,11 +132,14 @@ const Paper = React.createClass({
     burstDOM.className = 'panel-burst';
     burstDOM.setAttribute('data-burst-token', this.state.token);
 
-    // TODO: Make burst styles more paper specific
+    // Get dimensions to calculate burst size
+    var largerDimension = (baseDOM.offsetHeight > baseDOM.offsetWidth) ? baseDOM.offsetHeight : baseDOM.offsetWidth;
+    var burstSize = largerDimension / 6;
+    burstDOM.style.height = burstDOM.style.width = burstSize+'px';
+
+    // TODO: Static burst class styles
     burstDOM.style.background = 'rgba(0,0,0,.09)';
     burstDOM.style.borderRadius = '100%';
-    burstDOM.style.height = '50px';
-    burstDOM.style.width = '50px';
     burstDOM.style.position = 'absolute';
     burstDOM.style.zIndex = '1500';
     burstDOM.style.transform = 'scale(0)';
@@ -146,11 +151,11 @@ const Paper = React.createClass({
 
     // Set location
     var baseDOMCoords = getPosition(baseDOM);
-    burstDOM.style.top = (e.clientY - baseDOMCoords.y - 25)+'px';
-    burstDOM.style.left = (e.clientX - baseDOMCoords.x - 25)+'px';
+    burstDOM.style.top = (e.clientY - baseDOMCoords.y - (burstSize/2))+'px';
+    burstDOM.style.left = (e.clientX - baseDOMCoords.x - (burstSize/2))+'px';
 
 
-    this._animate(1500);
+    this._animate(this.props.settings.burstSpeed);
 
   },
 
@@ -159,13 +164,11 @@ const Paper = React.createClass({
     if(!burstDOM){
       return 0;
     }
-
     var timing = timing || 1000;
 
     // Burst down animation
     burstDOM.style.transition = 'all '+timing+'ms cubic-bezier(0.23, 1, 0.32, 1) 0s';
     burstDOM.style.transform = 'scale(1.5)';
-
   },
 
   _burst:function(timing){
@@ -176,9 +179,10 @@ const Paper = React.createClass({
 
     // Get base node
     var baseDOM = document.querySelector('.panel-base[data-token="'+this.state.token+'"]');
+    var largerDimension = (baseDOM.offsetHeight > baseDOM.offsetWidth) ? baseDOM.offsetHeight : baseDOM.offsetWidth;
     var baseDimensions = (baseDOM.offsetHeight + baseDOM.offsetWidth) / 2;
     var burstDimensions = (burstDOM.offsetHeight + burstDOM.offsetWidth) / 2;
-    var burstDistance = baseDimensions / burstDimensions;
+    var burstDistance = largerDimension / burstDimensions;
     burstDistance *= 1.5;
 
     var timing = timing || 500;
@@ -200,41 +204,51 @@ const Paper = React.createClass({
 
   render: function(){
 
+    // If settings was not declared, quickly define an empty object
+    if(!this.props.settings){
+      this.props.settings = {};
+      console.warn('Warning: material-paper initialized without any settings.\nUnresolved paper token: '+this.state.token);
+    }
+
     // TODO: __extends is causing a Uncaught RangeError: Maximum call stack size exceeded
+    //       This is probably due to deep extending into extensive React prototypes somehow
     //       Consider editing this function to perform only shallow copies.
     // EDIT: Implemented shallow copying with Object.assign().
     //       Not sure how stable or widely support this function is, might
     //       make a custom version.
 
-    var gradientColor = {};
+    // Outlines the possible settings for Paper
+    //   overlayColor     : background color to middle section of the paper (overlay color on background)
+    //   background       : the background of the paper
+    //   style            : custom style attribute for base paper
+    //   burstSpeed       : (ms) the speed at which the bursting animates
+    //   burstColor       : the color of the burst
+
+    var overlayColor = {}; 
     var backgroundProperties = {};
     var baseStyles = {};
     var burstColor = {};
 
-    //__extends(backgroundProperties, Styles.midBottomLevel);
-    //__extends(backgroundProperties, Styles.background);
     Object.assign(backgroundProperties, Styles.midBottomLevel);
     Object.assign(backgroundProperties, Styles.background);
 
-    //__extends(gradientColor, Styles.midUpperLevel);
-    Object.assign(gradientColor, Styles.midUpperLevel);
+    Object.assign(overlayColor, Styles.midUpperLevel);
 
-    if(this.props.backgroundColor){
-      backgroundProperties.backgroundColor = this.props.backgroundColor;
+    if(this.props.background){
+      backgroundProperties.background = this.props.settings.background;
     }
-    if(this.props.gradientColor){
-      gradientColor.background = this.props.gradientColor;
+    if(this.props.overlayColor){
+      overlayColor.background = this.props.overlayColor;
     }
     if(this.props.style){
       baseStyles = Styles.bottomLevel;
-      //__extends(baseStyles, this.props.style);
       Object.assign(baseStyles, this.props.style);
     }
 
     return(
       <div data-token={this.state.token} style={baseStyles} className="panel-bottom-level panel-base">
         <div className="panel-mid-bottom-level panel-background" style={backgroundProperties}></div>
-        <div className="panel-mid-upper-level panel-gradient" style={gradientColor}></div>
+        <div className="panel-mid-upper-level panel-gradient" style={overlayColor}></div>
         <a onMouseDown={this._onMouseDown} 
            onMouseUp={this._onMouseUp}
            onMouseOver={this._onMouseOver}

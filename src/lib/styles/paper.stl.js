@@ -43,7 +43,6 @@ exports = module.exports = {
   },
 
   background: {
-    backgroundColor: '#151515',
     backgroundPosition: 'center center',
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
@@ -75,4 +74,4 @@ exports = module.exports = {
     borderRadius: '2px'
   }
 
-};
+}

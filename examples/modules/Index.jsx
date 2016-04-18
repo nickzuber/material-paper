@@ -11,8 +11,17 @@
 const React = require('react');
 
 // Module components
-const MP = require('../../src/index');
+const MP = require('../../build/index');
 const Paper = MP.Paper;
+
+var paperSettings = {
+  background: '#fff',
+  style: {
+    'margin': '50px auto 50px',
+    'display': 'block'
+  },
+  burstSpeed: 1500
+}
 
 // Construct React component
 const app = React.createClass({
@@ -21,7 +30,9 @@ const app = React.createClass({
     return(
       <div>
         <Paper
-          backgroundColor='#fff'
+          settings={paperSettings}
+
+          background='#fff'
           style={{
             'margin': '50px auto 50px',
             'display': 'block'
