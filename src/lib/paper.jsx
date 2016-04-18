@@ -64,14 +64,15 @@ const Paper = React.createClass({
 
   getDefaultProps: function() {
     return {
-      title: 'Undefined',
-      description: 'Undefined'
+      title: 'Undefined'
     };
   },
 
   getInitialState: function(){
     return {
-      token: undefined
+      token         : undefined,
+      defaultZDepth : undefined,
+      raisedZDepth  : undefined
     }
   },
 
@@ -90,18 +91,89 @@ const Paper = React.createClass({
       document.querySelector('.panel-top-level').children[i].classList.add('-panel-item');
     }
 
+    // Set default zDepth
+    switch(parseInt(this.props.settings.zDepth, 10)){
+      case 0:
+        this.setState({
+          defaultZDepth: 'zero',
+          raisedZDepth : 'one'
+        });
+        break;
+      case 1:
+        this.setState({
+          defaultZDepth: 'one',
+          raisedZDepth : 'two'
+        });
+        break;
+      case 2:
+        this.setState({
+          defaultZDepth: 'two',
+          raisedZDepth : 'three'
+        });
+        break;
+      case 3:
+        this.setState({
+          defaultZDepth: 'three',
+          raisedZDepth : 'four'
+        });
+        break;
+      case 4:
+        this.setState({
+          defaultZDepth: 'four',
+          raisedZDepth : 'four'
+        });
+        break;
+      default:
+        this.setState({
+          defaultZDepth: 'zero',
+          raisedZDepth : 'one'
+        });
+        break;
+    }
+
     // Set event handler for un-bursting
     this._setEventHandler();
   },
 
   _setEventHandler: function(){
     if(!this.props.settings.clickable) return;
+
     if(typeof window !== 'undefined'){
       window.addEventListener('mouseup', function(e){
+        // Note: if a element is unresolvable and we cannot get a token or id, we
+        //       want to set the variable to NaN instead of undefined or null. This
+        //       is because when we compare the id with the token, if they're both
+        //       set to undefined or both set to null, they will resolve as true,
+        //       while NaN and NaN resolve to false.
+
+        // Active burst element
         var existingBurstDOM = document.querySelector('.panel-burst');
-        if(existingBurstDOM && e.target.className.indexOf('-panel-item') === -1){
+        if(existingBurstDOM){
+          var existingBurstID = existingBurstDOM.getAttribute('data-burst-token');
+          console.log('burstID: '+existingBurstID);
+        }else{
+          var existingBurstID = NaN;
+          console.log('burstID: '+existingBurstID+' (does not exist)');
+        }
+
+        // Target element
+        var targetElementDOM = e.target;
+        if(e.target.className.indexOf('-panel-item') > -1){
+          var targetElementToken = targetElementDOM.getAttribute('data-token');
+          console.log('paperID: '+targetElementToken);
+        }else{
+          var targetElementToken = NaN;
+          console.log('paperID: '+targetElementToken+' (not paper element)');
+        }
+
+        // If mouseup on any element that isn't the respective paper element, 
+        // we want to unburst the current burst element (if exists)
+        if(existingBurstDOM && existingBurstID !== targetElementToken){
           existingBurstDOM.style.transition = 'all 250ms ease';
           existingBurstDOM.style.transform = 'scale(0)';
+          setTimeout(function(){
+            existingBurstDOM.remove();
+          }, 250);
         }
       });
     }
@@ -113,10 +185,7 @@ const Paper = React.createClass({
     //backgroundDOM.style.transform = 'scale(1.05)';
 
     // Lift up
-    if(this.props.settings.liftOnHover){
-      var baseDOM = document.querySelector('.panel-base[data-token="'+this.state.token+'"]');
-      baseDOM.style.boxShadow = UtilStyles.zDepth.one.boxShadow;
-    }
+    this.props.settings.liftOnHover ? this._liftUp() : 0;
   },
 
   _onMouseOut: function(){
@@ -125,15 +194,20 @@ const Paper = React.createClass({
     //backgroundDOM.style.transform = 'scale(1)';
 
     // Lift back down
-    if(this.props.settings.liftOnHover){
-      var baseDOM = document.querySelector('.panel-base[data-token="'+this.state.token+'"]');
-      baseDOM.style.boxShadow = UtilStyles.zDepth.zero.boxShadow;
-    }
+    this.props.settings.liftOnHover ? this._liftDown() : 0;
+
     // Lift back down (onClick)
-    if(this.props.settings.liftOnClick){
-      var baseDOM = document.querySelector('.panel-base[data-token="'+this.state.token+'"]');
-      baseDOM.style.boxShadow = UtilStyles.zDepth.zero.boxShadow;
-    }
+    this.props.settings.liftOnClick ? this._liftDown() : 0;
+  },
+
+  _liftUp: function(){
+    var baseDOM = document.querySelector('.panel-base[data-token="'+this.state.token+'"]');
+    baseDOM.style.boxShadow = UtilStyles.zDepth[this.state.raisedZDepth].boxShadow;
+  },
+
+  _liftDown: function(){
+    var baseDOM = document.querySelector('.panel-base[data-token="'+this.state.token+'"]');
+    baseDOM.style.boxShadow = UtilStyles.zDepth[this.state.defaultZDepth].boxShadow;
   },
 
   _onMouseDown: function(e){
@@ -177,13 +251,9 @@ const Paper = React.createClass({
     burstDOM.style.left = (e.clientX - baseDOMCoords.x - (burstSize/2))+'px';
 
     // Lift up
-    if(this.props.settings.liftOnClick){
-      var baseDOM = document.querySelector('.panel-base[data-token="'+this.state.token+'"]');
-      baseDOM.style.boxShadow = UtilStyles.zDepth.one.boxShadow;
-    }
+    this.props.settings.liftOnClick ? this._liftUp() : 0;
 
     this._animate(this.props.settings.burstSpeed);
-
   },
 
   _animate: function(timing){
@@ -233,10 +303,7 @@ const Paper = React.createClass({
     if(!this.props.settings.clickable) return;
 
     // Lift back down
-    if(this.props.settings.liftOnClick){
-      var baseDOM = document.querySelector('.panel-base[data-token="'+this.state.token+'"]');
-      baseDOM.style.boxShadow = UtilStyles.zDepth.zero.boxShadow;
-    }
+    this.props.settings.liftOnClick ? this._liftDown() : 0;
 
     // Burst
     this._burst(this.props.settings.burstSpeed);
@@ -292,20 +359,25 @@ const Paper = React.createClass({
       Object.assign(topLevelStyles, Styles.topLevel);
     }
 
+    // Update: <a> was swapped for <span> (refering to the element with panel-link class)
+    //         This was because React throwing errors when trying to nest <a> tags
+    //         which would occur if the user tried to nest Paper components (which they should be able to do)
+
     return(
       <div data-token={this.state.token} style={baseStyles} className="panel-bottom-level panel-base">
-        <div className="panel-mid-bottom-level panel-background" style={backgroundProperties}></div>
-        <div className="panel-mid-upper-level panel-gradient" style={overlayColor}></div>
-        <a onMouseDown={this._onMouseDown} 
+        <div data-token={this.state.token} className="panel-mid-bottom-level panel-background" style={backgroundProperties}></div>
+        <div data-token={this.state.token} className="panel-mid-upper-level panel-gradient" style={overlayColor}></div>
+        <span onMouseDown={this._onMouseDown} 
            onMouseUp={this._onMouseUp}
            onMouseOver={this._onMouseOver}
            onMouseOut={this._onMouseOut}
            className="panel-link -panel-item" 
+           data-token={this.state.token}
            style={Styles.link}>
-          <div className="panel-top-level -panel-item" style={topLevelStyles}>
+          <div data-token={this.state.token} className="panel-top-level -panel-item" style={topLevelStyles}>
             {this.props.children}
           </div>
-        </a>
+        </span>
       </div>
     );
   }

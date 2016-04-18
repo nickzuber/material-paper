@@ -17,10 +17,29 @@ const Paper = MP.Paper;
 var paperSettings = {
   background: '#fff',
   style: {
-    'margin'   : '50px auto 50px',
+    'margin'   : '0 auto',
     'display'  : 'block',
-    'height'   : '30px',
-    'width'    : '200px'
+    'height'   : '100vh',
+    'width'    : '250px',
+    'position' : 'absolute',
+    'left'     : 0
+  },
+  overlayColor : undefined,
+  burstSpeed   : undefined,
+  burstColor   : undefined,
+  clickable    : false,
+  liftOnHover  : false,
+  liftOnClick  : false,
+  zDepth       : 2
+}
+
+var paperButtonSettings = {
+  background: '#fff',
+  style: {
+    'margin'   : '0 auto',
+    'display'  : 'block',
+    'height'   : '50px',
+    'width'    : '250px'
   },
   overlayColor : undefined,
   burstSpeed   : undefined,
@@ -37,7 +56,9 @@ const app = React.createClass({
     return(
       <div>
         <Paper settings={paperSettings}>
-            <p>Click me</p>
+            <Paper settings={paperButtonSettings}>
+              Home
+            </Paper>
           </Paper>
       </div>
     );
