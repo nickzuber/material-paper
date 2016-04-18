@@ -79,10 +79,15 @@ const Paper = React.createClass({
     do {
       var tokenAttempt = hash(Math.floor(Date.now() + Math.random() * 21));
     } while (document.querySelector('.panel-base[data-token="' + tokenAttempt + '"]'));
-
     this.setState({
       token: tokenAttempt
     });
+
+    // Update children elements with -panel-item flag
+    var childrenLength = document.querySelector('.panel-top-level').children.length;
+    for (i = 0; i < childrenLength; ++i) {
+      document.querySelector('.panel-top-level').children[i].classList.add('-panel-item');
+    }
 
     // Set event handler for un-bursting
     this._setEventHandler();
@@ -242,16 +247,7 @@ const Paper = React.createClass({
         React.createElement(
           'div',
           { className: 'panel-top-level -panel-item', style: Styles.topLevel },
-          React.createElement(
-            'h2',
-            { className: '-panel-item' },
-            this.props.title
-          ),
-          React.createElement(
-            'p',
-            { className: '-panel-item' },
-            this.props.description
-          )
+          this.props.children
         )
       )
     );

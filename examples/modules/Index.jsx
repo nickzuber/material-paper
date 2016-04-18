@@ -21,14 +21,15 @@ const app = React.createClass({
     return(
       <div>
         <Paper
-          title='Some Header'
-              description='Just some somewhat brief description of what this is.'
-              backgroundColor='#fff'
-              style={{
-                'margin': '50px auto 50px',
-                'display': 'block'
-              }}
-              target='' ></Paper>
+          backgroundColor='#fff'
+          style={{
+            'margin': '50px auto 50px',
+            'display': 'block'
+          }}
+          >
+            <h1>Header</h1>
+            <p>Paragraph text and some more words and stuff.</p>
+          </Paper>
       </div>
     );
   }

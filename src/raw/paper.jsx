@@ -77,10 +77,15 @@ const Paper = React.createClass({
     do{
       var tokenAttempt = hash(Math.floor(Date.now()+(Math.random()*21)));
     }while(document.querySelector('.panel-base[data-token="'+tokenAttempt+'"]'));
-
     this.setState({
       token: tokenAttempt
     });
+
+    // Update children elements with -panel-item flag
+    var childrenLength = document.querySelector('.panel-top-level').children.length;
+    for(i=0; i<childrenLength; ++i){
+      document.querySelector('.panel-top-level').children[i].classList.add('-panel-item');
+    }
 
     // Set event handler for un-bursting
     this._setEventHandler();
@@ -238,8 +243,7 @@ const Paper = React.createClass({
            style={Styles.link}
            href="javascript:void(0);">
           <div className="panel-top-level -panel-item" style={Styles.topLevel}>
-            <h2 className="-panel-item">{this.props.title}</h2>
-            <p className="-panel-item">{this.props.description}</p>
+            {this.props.children}
           </div>
         </a>
       </div>

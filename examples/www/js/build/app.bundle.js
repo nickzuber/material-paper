@@ -20068,14 +20068,15 @@
 	    return(
 	      React.createElement("div", null, 
 	        React.createElement(Paper, {
-	          title: "Some Header", 
-	              description: "Just some somewhat brief description of what this is.", 
-	              backgroundColor: "#fff", 
-	              style: {
-	                'margin': '50px auto 50px',
-	                'display': 'block'
-	              }, 
-	              target: ""})
+	          backgroundColor: "#fff", 
+	          style: {
+	            'margin': '50px auto 50px',
+	            'display': 'block'
+	          }
+	          }, 
+	            React.createElement("h1", null, "Header"), 
+	            React.createElement("p", null, "Paragraph text and some more words and stuff.")
+	          )
 	      )
 	    );
 	  }
@@ -20188,10 +20189,15 @@
 	    do {
 	      var tokenAttempt = hash(Math.floor(Date.now() + Math.random() * 21));
 	    } while (document.querySelector('.panel-base[data-token="' + tokenAttempt + '"]'));
-
 	    this.setState({
 	      token: tokenAttempt
 	    });
+
+	    // Update children elements with -panel-item flag
+	    var childrenLength = document.querySelector('.panel-top-level').children.length;
+	    for (i = 0; i < childrenLength; ++i) {
+	      document.querySelector('.panel-top-level').children[i].classList.add('-panel-item');
+	    }
 
 	    // Set event handler for un-bursting
 	    this._setEventHandler();
@@ -20351,16 +20357,7 @@
 	        React.createElement(
 	          'div',
 	          { className: 'panel-top-level -panel-item', style: Styles.topLevel },
-	          React.createElement(
-	            'h2',
-	            { className: '-panel-item' },
-	            this.props.title
-	          ),
-	          React.createElement(
-	            'p',
-	            { className: '-panel-item' },
-	            this.props.description
-	          )
+	          this.props.children
 	        )
 	      )
 	    );
