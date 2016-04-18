@@ -129,6 +129,11 @@ const Paper = React.createClass({
       var baseDOM = document.querySelector('.panel-base[data-token="' + this.state.token + '"]');
       baseDOM.style.boxShadow = UtilStyles.zDepth.zero.boxShadow;
     }
+    // Lift back down (onClick)
+    if (this.props.settings.liftOnClick) {
+      var baseDOM = document.querySelector('.panel-base[data-token="' + this.state.token + '"]');
+      baseDOM.style.boxShadow = UtilStyles.zDepth.zero.boxShadow;
+    }
   },
 
   _onMouseDown: function (e) {
