@@ -34,9 +34,9 @@ var paperSettings = {
 }
 
 var paperButtonSettings = {
-  background: '#f0f',
+  background: '#fff',
   style: {
-    'margin'   : '0 auto',
+    'margin'   : '0 auto 10px',
     'display'  : 'block',
     'height'   : '50px',
     'width'    : '250px'
@@ -47,7 +47,8 @@ var paperButtonSettings = {
   clickable    : true,
   liftOnHover  : false,
   liftOnClick  : true,
-  zoom         : false
+  zoom         : false,
+  zDepth       : 0
 }
 
 // Construct React component

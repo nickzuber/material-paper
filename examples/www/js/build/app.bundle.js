@@ -20081,9 +20081,9 @@
 	}
 
 	var paperButtonSettings = {
-	  background: '#f0f',
+	  background: '#fff',
 	  style: {
-	    'margin'   : '0 auto',
+	    'margin'   : '0 auto 10px',
 	    'display'  : 'block',
 	    'height'   : '50px',
 	    'width'    : '250px'
@@ -20094,7 +20094,8 @@
 	  clickable    : true,
 	  liftOnHover  : false,
 	  liftOnClick  : true,
-	  zoom         : false
+	  zoom         : false,
+	  zDepth       : 0
 	}
 
 	// Construct React component
@@ -20227,32 +20228,41 @@
 	      document.querySelector('.panel-top-level').children[i].classList.add('-panel-item');
 	    }
 
+	    // Set a local variable for zDepth incase undefined
+	    var _zDepth = 'none';
+	    typeof this.props.settings.zDepth !== 'undefined' ? _zDepth = this.props.settings.zDepth : 0;
+
 	    // Set default zDepth
-	    switch (parseInt(this.props.settings.zDepth, 10)) {
+	    switch (_zDepth) {
+	      case '0':
 	      case 0:
 	        this.setState({
 	          defaultZDepth: 'zero',
 	          raisedZDepth: 'one'
 	        });
 	        break;
+	      case '1':
 	      case 1:
 	        this.setState({
 	          defaultZDepth: 'one',
 	          raisedZDepth: 'two'
 	        });
 	        break;
+	      case '2':
 	      case 2:
 	        this.setState({
 	          defaultZDepth: 'two',
 	          raisedZDepth: 'three'
 	        });
 	        break;
+	      case '3':
 	      case 3:
 	        this.setState({
 	          defaultZDepth: 'three',
 	          raisedZDepth: 'four'
 	        });
 	        break;
+	      case '4':
 	      case 4:
 	        this.setState({
 	          defaultZDepth: 'four',
@@ -20261,8 +20271,8 @@
 	        break;
 	      default:
 	        this.setState({
-	          defaultZDepth: 'zero',
-	          raisedZDepth: 'one'
+	          defaultZDepth: 'none',
+	          raisedZDepth: 'zero'
 	        });
 	        break;
 	    }
@@ -20273,9 +20283,6 @@
 
 	  _setEventHandler: function () {
 	    if (!this.props.settings.clickable) return;
-
-	    // @TEST
-	    console.warn(document.body.getAttribute('data-mp-listener-set'));
 
 	    if (typeof window !== 'undefined' && document.body.getAttribute('data-mp-listener-set') === null) {
 	      // To avoid setting more than one event listener for material paper, we add a flag
@@ -20500,16 +20507,47 @@
 	    __extend(baseStyles, Styles.bottomLevel);
 
 	    if (this.props.settings.background) {
-	      __extend(backgroundProperties, this.props.settings.background);
+	      backgroundProperties.background = this.props.settings.background;
 	    }
 	    if (this.props.settings.overlayColor) {
-	      __extend(overlayColor, this.props.settings.overlayColor);
+	      overlayColor.background = this.props.settings.overlayColor;
 	    }
 	    if (this.props.settings.style) {
 	      __extend(baseStyles, this.props.settings.style);
 	    }
 	    if (this.props.settings.clickable) {
 	      topLevelStyles.cursor = 'pointer';
+	    }
+
+	    // Set a local variable for zDepth incase undefined
+	    var _zDepth = 'none';
+	    typeof this.props.settings.zDepth !== 'undefined' ? _zDepth = this.props.settings.zDepth : 0;
+
+	    // Set the zDepth value for paper
+	    switch (_zDepth) {
+	      case '0':
+	      case 0:
+	        __extend(baseStyles, UtilStyles.zDepth.zero);
+	        break;
+	      case '1':
+	      case 1:
+	        __extend(baseStyles, UtilStyles.zDepth.one);
+	        break;
+	      case '2':
+	      case 2:
+	        __extend(baseStyles, UtilStyles.zDepth.two);
+	        break;
+	      case '3':
+	      case 3:
+	        __extend(baseStyles, UtilStyles.zDepth.three);
+	        break;
+	      case '4':
+	      case 4:
+	        __extend(baseStyles, UtilStyles.zDepth.four);
+	        break;
+	      default:
+	        __extend(baseStyles, UtilStyles.zDepth.none);
+	        break;
 	    }
 
 	    // Update: <a> was swapped for <span> (refering to the element with panel-link class)
