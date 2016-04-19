@@ -51,6 +51,11 @@ var paperButtonSettings = {
   zDepth       : 0
 }
 
+var buttonLabel = {
+  textAlign: 'center',
+  fontWeight: 500
+}
+
 // Construct React component
 const app = React.createClass({
 
@@ -59,10 +64,10 @@ const app = React.createClass({
       <div>
         <Paper className='sideBar' settings={paperSettings}>
             <Paper className='button1' settings={paperButtonSettings}>
-              <p>Button One</p>
+              <p style={buttonLabel}>Button One</p>
             </Paper>
             <Paper className='button2' settings={paperButtonSettings}>
-              <p>Button Two</p>
+              <p style={buttonLabel}>Button Two</p>
             </Paper>
           </Paper>
       </div>

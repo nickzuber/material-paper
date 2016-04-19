@@ -18,6 +18,18 @@ function __extend(t, s){
 }
 
 /** @private
+ * Performs a weak, shallow extend on target object from source object.
+ * Properties already defined in the target object will not be overwritten.
+ * @param {Object} the object to inherit properties
+ * @param {Object} the object to supply properties
+ * @return void
+ */
+function __weakExtend(t, s){
+  for(var p in s)
+    !t.hasOwnProperty(p) ? t[p] = s[p] : 0;
+}
+
+/** @private
  * Returns a hash of a given string
  * @param {string} string to hash
  * @return {string} hashed string

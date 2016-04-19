@@ -20098,6 +20098,11 @@
 	  zDepth       : 0
 	}
 
+	var buttonLabel = {
+	  textAlign: 'center',
+	  fontWeight: 500
+	}
+
 	// Construct React component
 	const app = React.createClass({displayName: "app",
 
@@ -20106,10 +20111,10 @@
 	      React.createElement("div", null, 
 	        React.createElement(Paper, {className: "sideBar", settings: paperSettings}, 
 	            React.createElement(Paper, {className: "button1", settings: paperButtonSettings}, 
-	              React.createElement("p", null, "Button One")
+	              React.createElement("p", {style: buttonLabel}, "Button One")
 	            ), 
 	            React.createElement(Paper, {className: "button2", settings: paperButtonSettings}, 
-	              React.createElement("p", null, "Button Two")
+	              React.createElement("p", {style: buttonLabel}, "Button Two")
 	            )
 	          )
 	      )
@@ -20159,6 +20164,17 @@
 	 */
 	function __extend(t, s) {
 	  for (var p in s) t[p] = s[p];
+	}
+
+	/** @private
+	 * Performs a weak, shallow extend on target object from source object.
+	 * Properties already defined in the target object will not be overwritten.
+	 * @param {Object} the object to inherit properties
+	 * @param {Object} the object to supply properties
+	 * @return void
+	 */
+	function __weakExtend(t, s) {
+	  for (var p in s) !t.hasOwnProperty(p) ? t[p] = s[p] : 0;
 	}
 
 	/** @private
@@ -20277,13 +20293,13 @@
 
 	  _flagChildrenNodes: function () {
 	    // Assuming that the paper token has been set.
-	    // Update children elements with -panel-item flag
+	    // Update children elements with -panel-item flag and also assign it the respective token
 	    var childrenLength = document.querySelector('.panel-top-level[data-token="' + this.state.token + '"]').children.length;
 	    for (i = 0; i < childrenLength; ++i) {
 	      // If we encounter another paper element as a child, we want to exit
-	      if (document.querySelector('.panel-top-level[data-token="' + this.state.token + '"]').children[i].classList.contains('panel-base')) {
-	        break;
-	      }
+	      // We do *not* want to recurse into another paper element and try to make flag it as a child element
+	      // Doing so would cause many conflicts
+	      if (document.querySelector('.panel-top-level[data-token="' + this.state.token + '"]').children[i].classList.contains('panel-base')) break;
 	      document.querySelector('.panel-top-level[data-token="' + this.state.token + '"]').children[i].classList.add('-panel-item');
 	      document.querySelector('.panel-top-level[data-token="' + this.state.token + '"]').children[i].setAttribute('data-token', this.state.token);
 	    }
@@ -20644,7 +20660,6 @@
 	    transition: 'all 750ms cubic-bezier(0.23, 1, 0.32, 1) 0s'
 	  },
 
-	  // look out
 	  link: {
 	    background: 'none',
 	    height: '100%',
