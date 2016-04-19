@@ -36,10 +36,10 @@ var paperSettings = {
 var paperButtonSettings = {
   background: '#fff',
   style: {
-    'margin'   : '0 auto 10px',
+    'margin'   : '10px auto',
     'display'  : 'block',
     'height'   : '50px',
-    'width'    : '250px'
+    'width'    : '150px'
   },
   overlayColor : undefined,
   burstSpeed   : undefined,
@@ -59,10 +59,10 @@ const app = React.createClass({
       <div>
         <Paper className='sideBar' settings={paperSettings}>
             <Paper className='button1' settings={paperButtonSettings}>
-              Button One
+              <p>Button One</p>
             </Paper>
             <Paper className='button2' settings={paperButtonSettings}>
-              Button Two
+              <p>Button Two</p>
             </Paper>
           </Paper>
       </div>

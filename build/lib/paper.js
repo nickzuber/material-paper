@@ -75,13 +75,7 @@ const Paper = React.createClass({
     } while (document.querySelector('.panel-base[data-token="' + tokenAttempt + '"]'));
     this.setState({
       token: tokenAttempt
-    });
-
-    // Update children elements with -panel-item flag
-    var childrenLength = document.querySelector('.panel-top-level').children.length;
-    for (i = 0; i < childrenLength; ++i) {
-      document.querySelector('.panel-top-level').children[i].classList.add('-panel-item');
-    }
+    }, this._flagChildrenNodes);
 
     // Set a local variable for zDepth incase undefined
     var _zDepth = 'none';
@@ -134,6 +128,20 @@ const Paper = React.createClass({
 
     // Set event handler for un-bursting
     this._setEventHandler();
+  },
+
+  _flagChildrenNodes: function () {
+    // Assuming that the paper token has been set.
+    // Update children elements with -panel-item flag
+    var childrenLength = document.querySelector('.panel-top-level[data-token="' + this.state.token + '"]').children.length;
+    for (i = 0; i < childrenLength; ++i) {
+      // If we encounter another paper element as a child, we want to exit
+      if (document.querySelector('.panel-top-level[data-token="' + this.state.token + '"]').children[i].classList.contains('panel-base')) {
+        break;
+      }
+      document.querySelector('.panel-top-level[data-token="' + this.state.token + '"]').children[i].classList.add('-panel-item');
+      document.querySelector('.panel-top-level[data-token="' + this.state.token + '"]').children[i].setAttribute('data-token', this.state.token);
+    }
   },
 
   _setEventHandler: function () {
