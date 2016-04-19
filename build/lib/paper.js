@@ -342,9 +342,8 @@ const Paper = React.createClass({
   render: function () {
 
     // If settings was not declared, quickly define an empty object
-    if (!this.props.settings) {
-      this.props.settings = {};
-      console.warn('Warning: material-paper initialized without any settings.\nUnresolved paper token: ' + this.state.token);
+    if (!Object.keys(this.props.settings).length && typeof this.state.token !== 'undefined') {
+      console.warn('Warning: Paper element initialized without any settings.\n         Unresolved paper token: ' + this.state.token);
     }
 
     // TODO: __extends is causing a Uncaught RangeError: Maximum call stack size exceeded

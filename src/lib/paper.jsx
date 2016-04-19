@@ -40,7 +40,8 @@ function hash(string){
   mask += '.ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   mask += '.0123456789';
   var result = '';
-  for (var i = length; i > 0; --i) result += mask[Math.round(Math.random() * (mask.length - 1))];
+  for(var i=length; i> 0; --i)
+    result += mask[Math.round(Math.random() * (mask.length - 1))];
   return result;
 }
 
@@ -345,9 +346,8 @@ const Paper = React.createClass({
   render: function(){
 
     // If settings was not declared, quickly define an empty object
-    if(!this.props.settings){
-      this.props.settings = {};
-      console.warn('Warning: material-paper initialized without any settings.\nUnresolved paper token: '+this.state.token);
+    if(!Object.keys(this.props.settings).length && typeof this.state.token !== 'undefined'){
+      console.warn('Warning: Paper element initialized without any settings.\n         Unresolved paper token: '+this.state.token);
     }
 
     // TODO: __extends is causing a Uncaught RangeError: Maximum call stack size exceeded

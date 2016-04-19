@@ -20070,7 +20070,7 @@
 	    width       : '250px',
 	    position    : 'absolute',
 	    left        : 0,
-	    marginLeft  : '-250px'
+	    marginLeft  : '-250px' // For animation purposes, we start the menu out of view
 	  },
 	  overlayColor  : undefined,
 	  burstSpeed    : undefined,
@@ -20099,6 +20099,23 @@
 	  zDepth       : 0
 	}
 
+	var menuButtonSettings = {
+	  background: '#fff',
+	  style: {
+	    margin     : '0 auto',
+	    display    : 'block',
+	    height     : '50px',
+	    width      : '250px'
+	  },
+	  overlayColor : undefined,
+	  burstSpeed   : undefined,
+	  burstColor   : undefined,
+	  clickable    : true,
+	  liftOnHover  : false,
+	  liftOnClick  : false,
+	  zoom         : false
+	}
+
 	var buttonLabel = {
 	  textAlign: 'center',
 	  fontWeight: 500
@@ -20119,11 +20136,17 @@
 	    return(
 	      React.createElement("div", null, 
 	        React.createElement(Paper, {className: "sideBar", settings: paperSettings}, 
-	            React.createElement(Paper, {className: "button1", settings: paperButtonSettings}, 
+	            React.createElement(Paper, {settings: menuButtonSettings}, 
 	              React.createElement("p", {style: buttonLabel}, "Button One")
 	            ), 
-	            React.createElement(Paper, {className: "button2", settings: paperButtonSettings}, 
+	            React.createElement(Paper, {settings: menuButtonSettings}, 
 	              React.createElement("p", {style: buttonLabel}, "Button Two")
+	            ), 
+	            React.createElement(Paper, {settings: menuButtonSettings}, 
+	              React.createElement("p", {style: buttonLabel}, "Button Three")
+	            ), 
+	            React.createElement(Paper, {settings: paperButtonSettings}, 
+	              React.createElement("p", {style: buttonLabel}, "Raised Button")
 	            )
 	          )
 	      )
@@ -20501,9 +20524,8 @@
 	  render: function () {
 
 	    // If settings was not declared, quickly define an empty object
-	    if (!this.props.settings) {
-	      this.props.settings = {};
-	      console.warn('Warning: material-paper initialized without any settings.\nUnresolved paper token: ' + this.state.token);
+	    if (!Object.keys(this.props.settings).length && typeof this.state.token !== 'undefined') {
+	      console.warn('Warning: Paper element initialized without any settings.\n         Unresolved paper token: ' + this.state.token);
 	    }
 
 	    // TODO: __extends is causing a Uncaught RangeError: Maximum call stack size exceeded

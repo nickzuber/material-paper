@@ -23,7 +23,7 @@ var paperSettings = {
     width       : '250px',
     position    : 'absolute',
     left        : 0,
-    marginLeft  : '-250px'
+    marginLeft  : '-250px' // For animation purposes, we start the menu out of view
   },
   overlayColor  : undefined,
   burstSpeed    : undefined,
@@ -52,6 +52,23 @@ var paperButtonSettings = {
   zDepth       : 0
 }
 
+var menuButtonSettings = {
+  background: '#fff',
+  style: {
+    margin     : '0 auto',
+    display    : 'block',
+    height     : '50px',
+    width      : '250px'
+  },
+  overlayColor : undefined,
+  burstSpeed   : undefined,
+  burstColor   : undefined,
+  clickable    : true,
+  liftOnHover  : false,
+  liftOnClick  : false,
+  zoom         : false
+}
+
 var buttonLabel = {
   textAlign: 'center',
   fontWeight: 500
@@ -72,11 +89,17 @@ const app = React.createClass({
     return(
       <div>
         <Paper className='sideBar' settings={paperSettings}>
-            <Paper className='button1' settings={paperButtonSettings}>
+            <Paper settings={menuButtonSettings}>
               <p style={buttonLabel}>Button One</p>
             </Paper>
-            <Paper className='button2' settings={paperButtonSettings}>
+            <Paper settings={menuButtonSettings}>
               <p style={buttonLabel}>Button Two</p>
+            </Paper>
+            <Paper settings={menuButtonSettings}>
+              <p style={buttonLabel}>Button Three</p>
+            </Paper>
+            <Paper settings={paperButtonSettings}>
+              <p style={buttonLabel}>Raised Button</p>
             </Paper>
           </Paper>
       </div>
