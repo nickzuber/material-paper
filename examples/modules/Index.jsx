@@ -14,6 +14,27 @@ const React = require('react');
 const MP = require('../../build/index');
 const Paper = MP.Paper;
 
+var paperNavSettings = {
+  background: '#fff',
+  style: {
+    margin      : '0 auto',
+    display     : 'block',
+    height      : '75px',
+    width       : '100%',
+    position    : 'absolute',
+    zIndex      : 1000,
+    left        : 0,
+    top         : 0
+  },
+  overlayColor  : undefined,
+  burstSpeed    : undefined,
+  burstColor    : undefined,
+  clickable     : false,
+  liftOnHover   : false,
+  liftOnClick   : false,
+  zDepth        : 1
+}
+
 var paperSettings = {
   background: '#fff',
   style: {
@@ -23,6 +44,7 @@ var paperSettings = {
     width       : '250px',
     position    : 'absolute',
     left        : 0,
+    zIndex      : 1500,
     marginLeft  : '-250px' // For animation purposes, we start the menu out of view
   },
   overlayColor  : undefined,
@@ -74,20 +96,29 @@ var buttonLabel = {
   fontWeight: 500
 }
 
-// Construct React component
 const app = React.createClass({
 
   componentDidMount: function(){
+    // Just to animate the side bar menu back into view
     if(typeof document !== 'undefined'){
       setTimeout(function(){
         document.querySelector('.sideBar').style.marginLeft = '0px';
-      }, 100)
+      }, 300);
     }
+  },
+
+  _handleClick: function(ref){
+    var targetPaper = this.refs.navBar;
+    setTimeout(function(){
+      targetPaper._manualBurst(700, 0);
+    }, 200);
   },
 
   render: function(){
     return(
       <div>
+        <Paper className='navBar' ref='navBar' settings={paperNavSettings}></Paper>
+
         <Paper className='sideBar' settings={paperSettings}>
             <Paper settings={menuButtonSettings}>
               <p style={buttonLabel}>Button One</p>
@@ -98,7 +129,8 @@ const app = React.createClass({
             <Paper settings={menuButtonSettings}>
               <p style={buttonLabel}>Button Three</p>
             </Paper>
-            <Paper settings={paperButtonSettings}>
+
+            <Paper onClick={this._handleClick} settings={paperButtonSettings}>
               <p style={buttonLabel}>Raised Button</p>
             </Paper>
           </Paper>

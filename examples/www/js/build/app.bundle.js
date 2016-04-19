@@ -20061,6 +20061,27 @@
 	const MP = __webpack_require__(167);
 	const Paper = MP.Paper;
 
+	var paperNavSettings = {
+	  background: '#fff',
+	  style: {
+	    margin      : '0 auto',
+	    display     : 'block',
+	    height      : '75px',
+	    width       : '100%',
+	    position    : 'absolute',
+	    zIndex      : 1000,
+	    left        : 0,
+	    top         : 0
+	  },
+	  overlayColor  : undefined,
+	  burstSpeed    : undefined,
+	  burstColor    : undefined,
+	  clickable     : false,
+	  liftOnHover   : false,
+	  liftOnClick   : false,
+	  zDepth        : 1
+	}
+
 	var paperSettings = {
 	  background: '#fff',
 	  style: {
@@ -20070,6 +20091,7 @@
 	    width       : '250px',
 	    position    : 'absolute',
 	    left        : 0,
+	    zIndex      : 1500,
 	    marginLeft  : '-250px' // For animation purposes, we start the menu out of view
 	  },
 	  overlayColor  : undefined,
@@ -20121,20 +20143,29 @@
 	  fontWeight: 500
 	}
 
-	// Construct React component
 	const app = React.createClass({displayName: "app",
 
 	  componentDidMount: function(){
+	    // Just to animate the side bar menu back into view
 	    if(typeof document !== 'undefined'){
 	      setTimeout(function(){
 	        document.querySelector('.sideBar').style.marginLeft = '0px';
-	      }, 100)
+	      }, 300);
 	    }
+	  },
+
+	  _handleClick: function(ref){
+	    var targetPaper = this.refs.navBar;
+	    setTimeout(function(){
+	      targetPaper._manualBurst(700, 0);
+	    }, 100);
 	  },
 
 	  render: function(){
 	    return(
 	      React.createElement("div", null, 
+	        React.createElement(Paper, {className: "navBar", ref: "navBar", settings: paperNavSettings}), 
+
 	        React.createElement(Paper, {className: "sideBar", settings: paperSettings}, 
 	            React.createElement(Paper, {settings: menuButtonSettings}, 
 	              React.createElement("p", {style: buttonLabel}, "Button One")
@@ -20145,7 +20176,8 @@
 	            React.createElement(Paper, {settings: menuButtonSettings}, 
 	              React.createElement("p", {style: buttonLabel}, "Button Three")
 	            ), 
-	            React.createElement(Paper, {settings: paperButtonSettings}, 
+
+	            React.createElement(Paper, {onClick: this._handleClick, settings: paperButtonSettings}, 
 	              React.createElement("p", {style: buttonLabel}, "Raised Button")
 	            )
 	          )
@@ -20355,21 +20387,21 @@
 	        var existingBurstDOM = document.querySelector('.panel-burst');
 	        if (existingBurstDOM) {
 	          var existingBurstID = existingBurstDOM.getAttribute('data-burst-token');
-	          console.log('burstID: ' + existingBurstID);
+	          //console.log('burstID: '+existingBurstID);
 	        } else {
-	          var existingBurstID = null;
-	          console.log('burstID: ' + existingBurstID + ' (does not exist)');
-	        }
+	            var existingBurstID = null;
+	            //console.log('burstID: '+existingBurstID+' (does not exist)');
+	          }
 
 	        // Target element
 	        var targetElementDOM = e.target;
 	        if (e.target.className.indexOf('-panel-item') > -1) {
 	          var targetElementToken = targetElementDOM.getAttribute('data-token');
-	          console.log('paperID: ' + targetElementToken);
+	          //console.log('paperID: '+targetElementToken);
 	        } else {
-	          var targetElementToken = null;
-	          console.log('paperID: ' + targetElementToken + ' (not paper element)');
-	        }
+	            var targetElementToken = null;
+	            //console.log('paperID: '+targetElementToken+' (not paper element)');
+	          }
 
 	        // If mouseup on any element that isn't the respective paper element,
 	        // we want to unburst the current burst element (if exists)
@@ -20385,7 +20417,7 @@
 	  },
 
 	  _onMouseOver: function () {
-	    if (!this.props.settings.clickable) return;
+	    //if(!this.props.settings.clickable) return;
 
 	    // Zoom background if requested
 	    if (this.props.settings.zoom) {
@@ -20398,7 +20430,7 @@
 	  },
 
 	  _onMouseOut: function () {
-	    if (!this.props.settings.clickable) return;
+	    //if(!this.props.settings.clickable) return;
 
 	    // Unzoom background if requested
 	    if (this.props.settings.zoom) {
@@ -20468,8 +20500,51 @@
 	    this._animate(this.props.settings.burstSpeed);
 	  },
 
-	  _animate: function (timing) {
-	    if (!this.props.settings.clickable) return;
+	  _manualBurst: function (x, y) {
+	    // Target base nodes
+	    var baseDOM = document.querySelector('.panel-base[data-token="' + this.state.token + '"]');
+	    var oldBurstDOM = document.querySelector('.panel-burst[data-burst-token="' + this.state.token + '"]');
+
+	    // If already exists, remove old and make new.
+	    if (oldBurstDOM) {
+	      oldBurstDOM.remove();
+	    }
+
+	    // Create burst
+	    var burstDOM = document.createElement('span');
+	    burstDOM.className = 'panel-burst';
+	    burstDOM.setAttribute('data-burst-token', this.state.token);
+
+	    // Get dimensions to calculate burst size
+	    var largerDimension = baseDOM.offsetHeight > baseDOM.offsetWidth ? baseDOM.offsetHeight : baseDOM.offsetWidth;
+	    var burstSize = largerDimension / 6;
+	    burstDOM.style.height = burstDOM.style.width = burstSize + 'px';
+
+	    // TODO: Static burst class styles
+	    burstDOM.style.background = 'rgba(0,0,0,.09)';
+	    burstDOM.style.borderRadius = '100%';
+	    burstDOM.style.position = 'absolute';
+	    burstDOM.style.zIndex = '1500';
+	    burstDOM.style.transform = 'scale(0)';
+
+	    this.props.settings.burstColor ? burstDOM.style.background = this.props.settings.burstColor : 0;
+
+	    // Attach to panel
+	    baseDOM.appendChild(burstDOM);
+
+	    // Set location
+	    var baseDOMCoords = getPosition(baseDOM);
+	    burstDOM.style.top = y - baseDOMCoords.y - burstSize / 2 + 'px';
+	    burstDOM.style.left = x - baseDOMCoords.x - burstSize / 2 + 'px';
+
+	    console.log(baseDOMCoords);
+	    console.log(burstSize / 2);
+
+	    this._animate(this.props.settings.burstSpeed, true);
+	  },
+
+	  _animate: function (timing, manual) {
+	    //if(!this.props.settings.clickable) return;
 
 	    var burstDOM = document.querySelector('.panel-burst[data-burst-token="' + this.state.token + '"]');
 	    if (!burstDOM) {
@@ -20480,10 +20555,12 @@
 	    // Burst down animation
 	    burstDOM.style.transition = 'all ' + timing + 'ms cubic-bezier(0.23, 1, 0.32, 1) 0s';
 	    burstDOM.style.transform = 'scale(1.5)';
+
+	    manual ? this._burst() : 0;
 	  },
 
 	  _burst: function (timing) {
-	    if (!this.props.settings.clickable) return;
+	    //if(!this.props.settings.clickable) return;
 
 	    var burstDOM = document.querySelector('.panel-burst[data-burst-token="' + this.state.token + '"]');
 	    if (!burstDOM) {
@@ -20521,6 +20598,12 @@
 	    this._burst(this.props.settings.burstSpeed);
 	  },
 
+	  _handleOnClick: function () {
+	    if (this.props.onClick) {
+	      this.props.onClick(this);
+	    }
+	  },
+
 	  render: function () {
 
 	    // If settings was not declared, quickly define an empty object
@@ -20528,23 +20611,18 @@
 	      console.warn('Warning: Paper element initialized without any settings.\n         Unresolved paper token: ' + this.state.token);
 	    }
 
-	    // TODO: __extends is causing a Uncaught RangeError: Maximum call stack size exceeded
-	    //       This is probably due to deep extending into extensive React prototypes somehow
-	    //       Consider editing this function to perform only shallow copies.
-	    // EDIT: Implemented shallow copying with Object.assign().
-	    //       Not sure how stable or widely support this function is, might
-	    //       make a custom version.
-	    // EDIT: I was right.. Object.assign() mutates the target object *and* the source objects!
-	    //       Could be a bug in the function (or weird intended design). Either way, I need to
-	    //       create my own custom shallow copy function that *does not* mutate the source objects.
-
+	    // TODO: Add all of the possible settings to this comment, and then migrate to API
 	    // Outlines the possible settings for Paper
-	    //   overlayColor     : background color to middle section of the paper (overlay color on background)
-	    //   background       : the background of the paper
-	    //   style            : custom style attribute for base paper
-	    //   burstSpeed       : (ms) the speed at which the bursting animates
-	    //   burstColor       : the color of the burst
-	    //   clickable        : the ability to click paper like a button
+	    //   overlayColor     : {string}  : background color to middle section of the paper (overlay color on background)
+	    //   background       : {string}  : the background of the paper
+	    //   style            : {object}  : custom style attribute for base paper
+	    //   burstSpeed       : {number}  : (ms) the speed at which the bursting animates
+	    //   burstColor       : {number}  : the color of the burst
+	    //   clickable        : {boolean} : the ability to click paper like a button
+	    //   liftOnHover      : {boolean} : raise the paper up a level when mouse hovers
+	    //   liftOnClick      : {boolean} : raise the paper up a level when mouse clicks
+	    //   zoom             : {boolean} : slightly zoom in on background when mouse hovers
+	    //   zDepth           : {number}  : set the zDepth to the paper element
 
 	    var overlayColor = {};
 	    var backgroundProperties = {};
@@ -20553,7 +20631,7 @@
 	    var burstColor = {};
 
 	    // Add custom class name(s) to base paper if requested
-	    var classList = 'panel-bottom-level panel-base ' + this.props.className;
+	    var coreClassList = 'panel-bottom-level panel-base ' + this.props.className;
 
 	    __extend(backgroundProperties, Styles.midBottomLevel);
 	    __extend(backgroundProperties, Styles.background);
@@ -20612,7 +20690,7 @@
 
 	    return React.createElement(
 	      'div',
-	      { 'data-token': this.state.token, style: baseStyles, className: classList },
+	      { 'data-token': this.state.token, style: baseStyles, className: coreClassList },
 	      React.createElement('div', { 'data-token': this.state.token, className: 'panel-mid-bottom-level panel-background', style: backgroundProperties }),
 	      React.createElement('div', { 'data-token': this.state.token, className: 'panel-mid-upper-level panel-gradient', style: overlayColor }),
 	      React.createElement(
@@ -20626,7 +20704,11 @@
 	          style: Styles.link },
 	        React.createElement(
 	          'div',
-	          { 'data-token': this.state.token, className: 'panel-top-level -panel-item', style: topLevelStyles },
+	          {
+	            onClick: this._handleOnClick,
+	            'data-token': this.state.token,
+	            className: 'panel-top-level -panel-item',
+	            style: topLevelStyles },
 	          this.props.children
 	        )
 	      )
