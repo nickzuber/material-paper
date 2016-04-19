@@ -6,23 +6,16 @@ const React = require('react');
 const Styles = require('./styles/paper.stl');
 const UtilStyles = require('./styles/utils.stl');
 
-/**
- * Extends an object with the properties of another.
+/** @private
+ * Performs a shallow extend on target object from source object.
  * @param {Object} the object to inherit properties
  * @param {Object} the object to supply properties
  * @return void
  */
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b){
-      if(b.hasOwnProperty(p)){
-        d[p] = b[p];
-      }
-    }
-    function __() {
-      this.constructor = d;
-    }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+function __extend(t, s){
+  for(var p in s)
+    t[p] = s[p];
+}
 
 /** @private
  * Returns a hash of a given string
@@ -64,7 +57,7 @@ const Paper = React.createClass({
 
   getDefaultProps: function() {
     return {
-      title: 'Undefined'
+      settings: {}
     };
   },
 
@@ -138,13 +131,19 @@ const Paper = React.createClass({
   _setEventHandler: function(){
     if(!this.props.settings.clickable) return;
 
-    if(typeof window !== 'undefined'){
+    // @TEST
+    console.warn(document.body.getAttribute('data-mp-listener-set'));
+
+    if(typeof window !== 'undefined' && document.body.getAttribute('data-mp-listener-set') === null){
+      // To avoid setting more than one event listener for material paper, we add a flag
+      // to the body element to let us know that the event listner has been set
+      document.body.setAttribute('data-mp-listener-set', true);
+
       window.addEventListener('mouseup', function(e){
         // Note: if a element is unresolvable and we cannot get a token or id, we
-        //       want to set the variable to NaN instead of undefined or null. This
-        //       is because when we compare the id with the token, if they're both
-        //       set to undefined or both set to null, they will resolve as true,
-        //       while NaN and NaN resolve to false.
+        //       want to set the variable to null to ensure that they are still
+        //       technically equal to each other, to make sure the if condition
+        //       later down the road will resolve to false.
 
         // Active burst element
         var existingBurstDOM = document.querySelector('.panel-burst');
@@ -152,7 +151,7 @@ const Paper = React.createClass({
           var existingBurstID = existingBurstDOM.getAttribute('data-burst-token');
           console.log('burstID: '+existingBurstID);
         }else{
-          var existingBurstID = NaN;
+          var existingBurstID = null;
           console.log('burstID: '+existingBurstID+' (does not exist)');
         }
 
@@ -162,7 +161,7 @@ const Paper = React.createClass({
           var targetElementToken = targetElementDOM.getAttribute('data-token');
           console.log('paperID: '+targetElementToken);
         }else{
-          var targetElementToken = NaN;
+          var targetElementToken = null;
           console.log('paperID: '+targetElementToken+' (not paper element)');
         }
 
@@ -181,8 +180,12 @@ const Paper = React.createClass({
 
   _onMouseOver: function(){
     if(!this.props.settings.clickable) return;
-    var backgroundDOM = document.querySelector('.panel-base[data-token="'+this.state.token+'"] .panel-background');
-    //backgroundDOM.style.transform = 'scale(1.05)';
+
+    // Zoom background if requested
+    if(this.props.settings.zoom){
+      var backgroundDOM = document.querySelector('.panel-base[data-token="'+this.state.token+'"] .panel-background');
+      backgroundDOM.style.transform = 'scale(1.05)';
+    }
 
     // Lift up
     this.props.settings.liftOnHover ? this._liftUp() : 0;
@@ -190,9 +193,12 @@ const Paper = React.createClass({
 
   _onMouseOut: function(){
     if(!this.props.settings.clickable) return;
-    var backgroundDOM = document.querySelector('.panel-base[data-token="'+this.state.token+'"] .panel-background');
-    //backgroundDOM.style.transform = 'scale(1)';
 
+    // Unzoom background if requested
+    if(this.props.settings.zoom){
+      var backgroundDOM = document.querySelector('.panel-base[data-token="'+this.state.token+'"] .panel-background');
+      backgroundDOM.style.transform = 'scale(1)';
+    }
     // Lift back down
     this.props.settings.liftOnHover ? this._liftDown() : 0;
 
@@ -323,6 +329,9 @@ const Paper = React.createClass({
     // EDIT: Implemented shallow copying with Object.assign().
     //       Not sure how stable or widely support this function is, might
     //       make a custom version.
+    // EDIT: I was right.. Object.assign() mutates the target object *and* the source objects!
+    //       Could be a bug in the function (or weird intended design). Either way, I need to 
+    //       create my own custom shallow copy function that *does not* mutate the source objects.
 
     // Outlines the possible settings for Paper
     //   overlayColor     : background color to middle section of the paper (overlay color on background)
@@ -338,33 +347,35 @@ const Paper = React.createClass({
     var baseStyles = {};
     var burstColor = {};
 
-    Object.assign(backgroundProperties, Styles.midBottomLevel);
-    Object.assign(backgroundProperties, Styles.background);
+    // Add custom class name(s) to base paper if requested
+    var classList = 'panel-bottom-level panel-base ' + this.props.className;
 
-    Object.assign(overlayColor, Styles.midUpperLevel);
+    __extend(backgroundProperties, Styles.midBottomLevel);
+    __extend(backgroundProperties, Styles.background);
+    __extend(overlayColor, Styles.midUpperLevel);
+    __extend(topLevelStyles, Styles.topLevel);
+    __extend(baseStyles, Styles.bottomLevel);
 
     if(this.props.settings.background){
-      backgroundProperties.background = this.props.settings.background;
+      __extend(backgroundProperties, this.props.settings.background);
     }
     if(this.props.settings.overlayColor){
-      overlayColor.background = this.props.settings.overlayColor;
+      __extend(overlayColor, this.props.settings.overlayColor);
     }
     if(this.props.settings.style){
-      baseStyles = Styles.bottomLevel;
-      Object.assign(baseStyles, UtilStyles.zDepth.zero);
-      Object.assign(baseStyles, this.props.settings.style);
+      __extend(baseStyles, this.props.settings.style);
     }
     if(this.props.settings.clickable){
-      topLevelStyles = {'cursor':'pointer'};
-      Object.assign(topLevelStyles, Styles.topLevel);
+      topLevelStyles.cursor = 'pointer';
     }
 
     // Update: <a> was swapped for <span> (refering to the element with panel-link class)
     //         This was because React throwing errors when trying to nest <a> tags
     //         which would occur if the user tried to nest Paper components (which they should be able to do)
+    //         So this means any link-related paper has to redirect in a customly built way (not a big deal)
 
     return(
-      <div data-token={this.state.token} style={baseStyles} className="panel-bottom-level panel-base">
+      <div data-token={this.state.token} style={baseStyles} className={classList}>
         <div data-token={this.state.token} className="panel-mid-bottom-level panel-background" style={backgroundProperties}></div>
         <div data-token={this.state.token} className="panel-mid-upper-level panel-gradient" style={overlayColor}></div>
         <span onMouseDown={this._onMouseDown} 

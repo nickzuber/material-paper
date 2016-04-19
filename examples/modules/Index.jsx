@@ -34,7 +34,7 @@ var paperSettings = {
 }
 
 var paperButtonSettings = {
-  background: '#fff',
+  background: '#f0f',
   style: {
     'margin'   : '0 auto',
     'display'  : 'block',
@@ -47,6 +47,7 @@ var paperButtonSettings = {
   clickable    : true,
   liftOnHover  : false,
   liftOnClick  : true,
+  zoom         : false
 }
 
 // Construct React component
@@ -55,9 +56,12 @@ const app = React.createClass({
   render: function(){
     return(
       <div>
-        <Paper settings={paperSettings}>
-            <Paper settings={paperButtonSettings}>
-              Home
+        <Paper className='sideBar' settings={paperSettings}>
+            <Paper className='button1' settings={paperButtonSettings}>
+              Button One
+            </Paper>
+            <Paper className='button2' settings={paperButtonSettings}>
+              Button Two
             </Paper>
           </Paper>
       </div>
