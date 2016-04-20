@@ -20066,7 +20066,7 @@
 	  style: {
 	    margin      : '0 auto',
 	    display     : 'block',
-	    height      : '75px',
+	    height      : '150px',
 	    width       : '100%',
 	    position    : 'absolute',
 	    zIndex      : 1000,
@@ -20074,7 +20074,7 @@
 	    top         : 0
 	  },
 	  overlayColor  : undefined,
-	  burstSpeed    : undefined,
+	  burstSpeed    : 3000,
 	  burstColor    : undefined,
 	  clickable     : false,
 	  liftOnHover   : false,
@@ -20157,8 +20157,8 @@
 	  _handleClick: function(ref){
 	    var targetPaper = this.refs.navBar;
 	    setTimeout(function(){
-	      targetPaper._manualBurst(700, 0);
-	    }, 100);
+	      targetPaper._manualBurst(0, 0);
+	    }, 200);
 	  },
 
 	  render: function(){
@@ -20417,8 +20417,6 @@
 	  },
 
 	  _onMouseOver: function () {
-	    //if(!this.props.settings.clickable) return;
-
 	    // Zoom background if requested
 	    if (this.props.settings.zoom) {
 	      var backgroundDOM = document.querySelector('.panel-base[data-token="' + this.state.token + '"] .panel-background');
@@ -20430,8 +20428,6 @@
 	  },
 
 	  _onMouseOut: function () {
-	    //if(!this.props.settings.clickable) return;
-
 	    // Unzoom background if requested
 	    if (this.props.settings.zoom) {
 	      var backgroundDOM = document.querySelector('.panel-base[data-token="' + this.state.token + '"] .panel-background');
@@ -20560,8 +20556,6 @@
 	  },
 
 	  _burst: function (timing) {
-	    //if(!this.props.settings.clickable) return;
-
 	    var burstDOM = document.querySelector('.panel-burst[data-burst-token="' + this.state.token + '"]');
 	    if (!burstDOM) {
 	      return 0;

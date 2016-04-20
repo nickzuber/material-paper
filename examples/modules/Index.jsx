@@ -19,7 +19,7 @@ var paperNavSettings = {
   style: {
     margin      : '0 auto',
     display     : 'block',
-    height      : '75px',
+    height      : '150px',
     width       : '100%',
     position    : 'absolute',
     zIndex      : 1000,
@@ -27,7 +27,7 @@ var paperNavSettings = {
     top         : 0
   },
   overlayColor  : undefined,
-  burstSpeed    : undefined,
+  burstSpeed    : 3000,
   burstColor    : undefined,
   clickable     : false,
   liftOnHover   : false,
@@ -110,7 +110,7 @@ const app = React.createClass({
   _handleClick: function(ref){
     var targetPaper = this.refs.navBar;
     setTimeout(function(){
-      targetPaper._manualBurst(700, 0);
+      targetPaper._manualBurst(0, 0);
     }, 200);
   },
 
