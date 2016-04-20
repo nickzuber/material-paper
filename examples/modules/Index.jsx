@@ -15,11 +15,11 @@ const MP = require('../../build/index');
 const Paper = MP.Paper;
 
 var paperNavSettings = {
-  background: '#fff',
+  background: '#eee',
   style: {
     margin      : '0 auto',
     display     : 'block',
-    height      : '150px',
+    height      : '100vh',
     width       : '100%',
     position    : 'absolute',
     zIndex      : 1000,
@@ -103,14 +103,14 @@ const app = React.createClass({
     if(typeof document !== 'undefined'){
       setTimeout(function(){
         document.querySelector('.sideBar').style.marginLeft = '0px';
-      }, 300);
+      }, 50);
     }
   },
 
   _handleClick: function(ref){
     var targetPaper = this.refs.navBar;
     setTimeout(function(){
-      targetPaper._manualBurst(0, 0);
+      targetPaper.createBurst(0, 0);
     }, 200);
   },
 

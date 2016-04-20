@@ -7,7 +7,7 @@
 exports = module.exports = {
 
   bottomLevel: {
-    background: '#fff',
+    background: 'none',
     width: '100px',
     height: '100px',
     position: 'relative',

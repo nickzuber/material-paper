@@ -20062,11 +20062,11 @@
 	const Paper = MP.Paper;
 
 	var paperNavSettings = {
-	  background: '#fff',
+	  background: '#eee',
 	  style: {
 	    margin      : '0 auto',
 	    display     : 'block',
-	    height      : '150px',
+	    height      : '100vh',
 	    width       : '100%',
 	    position    : 'absolute',
 	    zIndex      : 1000,
@@ -20150,14 +20150,14 @@
 	    if(typeof document !== 'undefined'){
 	      setTimeout(function(){
 	        document.querySelector('.sideBar').style.marginLeft = '0px';
-	      }, 300);
+	      }, 50);
 	    }
 	  },
 
 	  _handleClick: function(ref){
 	    var targetPaper = this.refs.navBar;
 	    setTimeout(function(){
-	      targetPaper._manualBurst(0, 0);
+	      targetPaper.createBurst(0, 0);
 	    }, 200);
 	  },
 
@@ -20213,71 +20213,23 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	
-	// Node components
+	/** Core Dependencies */
 	const React = __webpack_require__(1);
 
-	// Styles
+	/** Styles */
 	const Styles = __webpack_require__(169);
 	const UtilStyles = __webpack_require__(170);
 
-	/** @private
-	 * Performs a shallow extend on target object from source object.
-	 * @param {Object} the object to inherit properties
-	 * @param {Object} the object to supply properties
-	 * @return void
-	 */
-	function __extend(t, s) {
-	  for (var p in s) t[p] = s[p];
-	}
+	/** Classes */
+	const createBurst = __webpack_require__(171);
+	const onMouseUp = __webpack_require__(173);
+	const handleClick = __webpack_require__(174);
+	const burst = __webpack_require__(175);
 
-	/** @private
-	 * Performs a weak, shallow extend on target object from source object.
-	 * Properties already defined in the target object will not be overwritten.
-	 * @param {Object} the object to inherit properties
-	 * @param {Object} the object to supply properties
-	 * @return void
-	 */
-	function __weakExtend(t, s) {
-	  for (var p in s) !t.hasOwnProperty(p) ? t[p] = s[p] : 0;
-	}
+	/** Utility Methods */
+	const UtilityMethods = __webpack_require__(172);
 
-	/** @private
-	 * Returns a hash of a given string
-	 * @param {string} string to hash
-	 * @return {string} hashed string
-	 */
-	function hash(string) {
-	  var length = Math.floor(Math.random() * 10) + 10;
-	  var mask = '.abcdefghijklmnopqrstuvwxyz';
-	  mask += '.ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-	  mask += '.0123456789';
-	  var result = '';
-	  for (var i = length; i > 0; --i) result += mask[Math.round(Math.random() * (mask.length - 1))];
-	  return result;
-	}
-
-	/** @private
-	 * Gets the absolute coords of a given DOM element.
-	 * @param {DOMElement} element to find coords
-	 * @return {object} object containing x and y coords
-	 */
-	function getPosition(element) {
-	  var xPosition = 0;
-	  var yPosition = 0;
-	  while (element) {
-	    xPosition += element.offsetLeft - element.scrollLeft + element.clientLeft;
-	    yPosition += element.offsetTop + element.clientTop;
-	    element = element.offsetParent;
-	  }
-	  // Account for distance scrolled from top of document
-	  yPosition -= window.scrollY;
-	  return {
-	    x: xPosition,
-	    y: yPosition
-	  };
-	}
-
-	const Paper = React.createClass({
+	const baseClasses = {
 
 	  getDefaultProps: function () {
 	    return {
@@ -20296,7 +20248,7 @@
 	  componentDidMount: function () {
 	    // Attempt to create a token until we get a unique one
 	    do {
-	      var tokenAttempt = hash(Math.floor(Date.now() + Math.random() * 21));
+	      var tokenAttempt = UtilityMethods.hash(Math.floor(Date.now() + Math.random() * 21));
 	    } while (document.querySelector('.panel-base[data-token="' + tokenAttempt + '"]'));
 	    this.setState({
 	      token: tokenAttempt
@@ -20384,7 +20336,7 @@
 	        //       later down the road will resolve to false.
 
 	        // Active burst element
-	        var existingBurstDOM = document.querySelector('.panel-burst');
+	        var existingBurstDOM = document.querySelector('.panel-burst[data-native]');
 	        if (existingBurstDOM) {
 	          var existingBurstID = existingBurstDOM.getAttribute('data-burst-token');
 	          //console.log('burstID: '+existingBurstID);
@@ -20450,152 +20402,20 @@
 	    baseDOM.style.boxShadow = UtilStyles.zDepth[this.state.defaultZDepth].boxShadow;
 	  },
 
-	  _onMouseDown: function (e) {
-	    if (!this.props.settings.clickable) return;
-	    e.preventDefault();
-
-	    // Target base nodes
-	    var baseDOM = document.querySelector('.panel-base[data-token="' + this.state.token + '"]');
-	    var oldBurstDOM = document.querySelector('.panel-burst[data-burst-token="' + this.state.token + '"]');
-
-	    // If already exists, remove old and make new.
-	    if (oldBurstDOM) {
-	      oldBurstDOM.remove();
-	    }
-
-	    // Create burst
-	    var burstDOM = document.createElement('span');
-	    burstDOM.className = 'panel-burst';
-	    burstDOM.setAttribute('data-burst-token', this.state.token);
-
-	    // Get dimensions to calculate burst size
-	    var largerDimension = baseDOM.offsetHeight > baseDOM.offsetWidth ? baseDOM.offsetHeight : baseDOM.offsetWidth;
-	    var burstSize = largerDimension / 6;
-	    burstDOM.style.height = burstDOM.style.width = burstSize + 'px';
-
-	    // TODO: Static burst class styles
-	    burstDOM.style.background = 'rgba(0,0,0,.09)';
-	    burstDOM.style.borderRadius = '100%';
-	    burstDOM.style.position = 'absolute';
-	    burstDOM.style.zIndex = '1500';
-	    burstDOM.style.transform = 'scale(0)';
-
-	    this.props.settings.burstColor ? burstDOM.style.background = this.props.settings.burstColor : 0;
-
-	    // Attach to panel
-	    baseDOM.appendChild(burstDOM);
-
-	    // Set location
-	    var baseDOMCoords = getPosition(baseDOM);
-	    burstDOM.style.top = e.clientY - baseDOMCoords.y - burstSize / 2 + 'px';
-	    burstDOM.style.left = e.clientX - baseDOMCoords.x - burstSize / 2 + 'px';
-
-	    // Lift up
-	    this.props.settings.liftOnClick ? this._liftUp() : 0;
-
-	    this._animate(this.props.settings.burstSpeed);
-	  },
-
-	  _manualBurst: function (x, y) {
-	    // Target base nodes
-	    var baseDOM = document.querySelector('.panel-base[data-token="' + this.state.token + '"]');
-	    var oldBurstDOM = document.querySelector('.panel-burst[data-burst-token="' + this.state.token + '"]');
-
-	    // If already exists, remove old and make new.
-	    if (oldBurstDOM) {
-	      oldBurstDOM.remove();
-	    }
-
-	    // Create burst
-	    var burstDOM = document.createElement('span');
-	    burstDOM.className = 'panel-burst';
-	    burstDOM.setAttribute('data-burst-token', this.state.token);
-
-	    // Get dimensions to calculate burst size
-	    var largerDimension = baseDOM.offsetHeight > baseDOM.offsetWidth ? baseDOM.offsetHeight : baseDOM.offsetWidth;
-	    var burstSize = largerDimension / 6;
-	    burstDOM.style.height = burstDOM.style.width = burstSize + 'px';
-
-	    // TODO: Static burst class styles
-	    burstDOM.style.background = 'rgba(0,0,0,.09)';
-	    burstDOM.style.borderRadius = '100%';
-	    burstDOM.style.position = 'absolute';
-	    burstDOM.style.zIndex = '1500';
-	    burstDOM.style.transform = 'scale(0)';
-
-	    this.props.settings.burstColor ? burstDOM.style.background = this.props.settings.burstColor : 0;
-
-	    // Attach to panel
-	    baseDOM.appendChild(burstDOM);
-
-	    // Set location
-	    var baseDOMCoords = getPosition(baseDOM);
-	    burstDOM.style.top = y - baseDOMCoords.y - burstSize / 2 + 'px';
-	    burstDOM.style.left = x - baseDOMCoords.x - burstSize / 2 + 'px';
-
-	    console.log(baseDOMCoords);
-	    console.log(burstSize / 2);
-
-	    this._animate(this.props.settings.burstSpeed, true);
-	  },
-
-	  _animate: function (timing, manual) {
-	    //if(!this.props.settings.clickable) return;
-
+	  _animate: function (manual) {
 	    var burstDOM = document.querySelector('.panel-burst[data-burst-token="' + this.state.token + '"]');
 	    if (!burstDOM) {
 	      return 0;
 	    }
-	    var timing = timing || 1000;
+	    var timing = 1000;
 
 	    // Burst down animation
 	    burstDOM.style.transition = 'all ' + timing + 'ms cubic-bezier(0.23, 1, 0.32, 1) 0s';
 	    burstDOM.style.transform = 'scale(1.5)';
 
-	    manual ? this._burst() : 0;
-	  },
-
-	  _burst: function (timing) {
-	    var burstDOM = document.querySelector('.panel-burst[data-burst-token="' + this.state.token + '"]');
-	    if (!burstDOM) {
-	      return 0;
-	    }
-
-	    // Get base node
-	    var baseDOM = document.querySelector('.panel-base[data-token="' + this.state.token + '"]');
-	    var largerDimension = baseDOM.offsetHeight > baseDOM.offsetWidth ? baseDOM.offsetHeight : baseDOM.offsetWidth;
-	    var baseDimensions = (baseDOM.offsetHeight + baseDOM.offsetWidth) / 2;
-	    var burstDimensions = (burstDOM.offsetHeight + burstDOM.offsetWidth) / 2;
-	    var burstDistance = largerDimension / burstDimensions;
-	    burstDistance *= 1.5;
-
-	    var timing = timing || 1250;
-
-	    // Burst animation
-	    burstDOM.style.transition = 'all ' + timing + 'ms cubic-bezier(0.23, 1, 0.32, 1) 0s';
-	    burstDOM.style.transform = 'scale(' + burstDistance + ')';
-	    burstDOM.style.opacity = '0';
-
-	    // Remove burst element when finished animating
-	    setTimeout(function () {
-	      burstDOM.remove();
-	    }, timing);
-	  },
-
-	  _onMouseUp: function () {
-	    if (!this.props.settings.clickable) return;
-
-	    // Lift back down
-	    this.props.settings.liftOnClick ? this._liftDown() : 0;
-
-	    // Burst
-	    this._burst(this.props.settings.burstSpeed);
-	  },
-
-	  _handleOnClick: function () {
-	    if (this.props.onClick) {
-	      this.props.onClick(this);
-	    }
+	    // If manual burst element, we want to burst it right away
+	    // and not wait for a mouseup event to trigger burst.
+	    manual ? this._burst(this.props.settings.burstSpeed) : 0;
 	  },
 
 	  render: function () {
@@ -20627,11 +20447,11 @@
 	    // Add custom class name(s) to base paper if requested
 	    var coreClassList = 'panel-bottom-level panel-base ' + this.props.className;
 
-	    __extend(backgroundProperties, Styles.midBottomLevel);
-	    __extend(backgroundProperties, Styles.background);
-	    __extend(overlayColor, Styles.midUpperLevel);
-	    __extend(topLevelStyles, Styles.topLevel);
-	    __extend(baseStyles, Styles.bottomLevel);
+	    UtilityMethods.__extend(backgroundProperties, Styles.midBottomLevel);
+	    UtilityMethods.__extend(backgroundProperties, Styles.background);
+	    UtilityMethods.__extend(overlayColor, Styles.midUpperLevel);
+	    UtilityMethods.__extend(topLevelStyles, Styles.topLevel);
+	    UtilityMethods.__extend(baseStyles, Styles.bottomLevel);
 
 	    if (this.props.settings.background) {
 	      backgroundProperties.background = this.props.settings.background;
@@ -20640,7 +20460,7 @@
 	      overlayColor.background = this.props.settings.overlayColor;
 	    }
 	    if (this.props.settings.style) {
-	      __extend(baseStyles, this.props.settings.style);
+	      UtilityMethods.__extend(baseStyles, this.props.settings.style);
 	    }
 	    if (this.props.settings.clickable) {
 	      topLevelStyles.cursor = 'pointer';
@@ -20654,26 +20474,26 @@
 	    switch (_zDepth) {
 	      case '0':
 	      case 0:
-	        __extend(baseStyles, UtilStyles.zDepth.zero);
+	        UtilityMethods.__extend(baseStyles, UtilStyles.zDepth.zero);
 	        break;
 	      case '1':
 	      case 1:
-	        __extend(baseStyles, UtilStyles.zDepth.one);
+	        UtilityMethods.__extend(baseStyles, UtilStyles.zDepth.one);
 	        break;
 	      case '2':
 	      case 2:
-	        __extend(baseStyles, UtilStyles.zDepth.two);
+	        UtilityMethods.__extend(baseStyles, UtilStyles.zDepth.two);
 	        break;
 	      case '3':
 	      case 3:
-	        __extend(baseStyles, UtilStyles.zDepth.three);
+	        UtilityMethods.__extend(baseStyles, UtilStyles.zDepth.three);
 	        break;
 	      case '4':
 	      case 4:
-	        __extend(baseStyles, UtilStyles.zDepth.four);
+	        UtilityMethods.__extend(baseStyles, UtilStyles.zDepth.four);
 	        break;
 	      default:
-	        __extend(baseStyles, UtilStyles.zDepth.none);
+	        UtilityMethods.__extend(baseStyles, UtilStyles.zDepth.none);
 	        break;
 	    }
 
@@ -20689,7 +20509,7 @@
 	      React.createElement('div', { 'data-token': this.state.token, className: 'panel-mid-upper-level panel-gradient', style: overlayColor }),
 	      React.createElement(
 	        'span',
-	        { onMouseDown: this._onMouseDown,
+	        { onMouseDown: this._createBurst,
 	          onMouseUp: this._onMouseUp,
 	          onMouseOver: this._onMouseOver,
 	          onMouseOut: this._onMouseOut,
@@ -20709,9 +20529,19 @@
 	    );
 	  }
 
-	});
+	};
 
-	module.exports = Paper;
+	const materialPaperClasses = {};
+
+	UtilityMethods.__weakExtend(materialPaperClasses, baseClasses);
+	UtilityMethods.__weakExtend(materialPaperClasses, onMouseUp);
+	UtilityMethods.__weakExtend(materialPaperClasses, createBurst);
+	UtilityMethods.__weakExtend(materialPaperClasses, handleClick);
+	UtilityMethods.__weakExtend(materialPaperClasses, burst);
+
+	const MaterialPaper = React.createClass(materialPaperClasses);
+
+	module.exports = MaterialPaper;
 
 /***/ },
 /* 169 */
@@ -20726,7 +20556,7 @@
 	exports = module.exports = {
 
 	  bottomLevel: {
-	    background: '#fff',
+	    background: 'none',
 	    width: '100px',
 	    height: '100px',
 	    position: 'relative',
@@ -20821,6 +20651,284 @@
 	  }
 
 	};
+
+/***/ },
+/* 171 */
+/***/ function(module, exports, __webpack_require__) {
+
+	
+	const UtilityMethods = __webpack_require__(172);
+
+	/** @description
+	 * Handles the process of creating the burst element and expanding it into view.
+	 * Accounts for both cases where a burst is internally invoked and externally invoked.
+	 *
+	 * @param      {Event}         the event that captures data regarding mouse location etc.
+	 * @param      {number}        optional x coordinate offset for where burst is created relative to container
+	 * @param      {number}        optional y coordinate offset for where burst is created relative to container
+	 * @return     {void}
+	 *
+	 * @dependency {React.method} _animate
+	 * @dependency {React.prop}   settings
+	 * @dependency {React.state}  token
+	 */
+	const createBurst = {
+
+	    /** Manual burst creation usually invoked by some external process */
+	    createBurst: function (offsetX, offsetY) {
+	        // Target base nodes
+	        var baseDOM = document.querySelector('.panel-base[data-token="' + this.state.token + '"]');
+	        var oldBurstDOM = document.querySelector('.panel-burst[data-burst-token="' + this.state.token + '"]');
+
+	        // If already exists, remove old and make new.
+	        if (oldBurstDOM) {}
+	        //oldBurstDOM.remove();
+
+
+	        // Create burst
+	        var burstDOM = document.createElement('span');
+	        burstDOM.className = 'panel-burst';
+	        burstDOM.setAttribute('data-burst-token', this.state.token);
+
+	        // Get dimensions to calculate burst size
+	        var largerDimension = baseDOM.offsetHeight > baseDOM.offsetWidth ? baseDOM.offsetHeight : baseDOM.offsetWidth;
+	        var burstSize = largerDimension / 6;
+	        burstDOM.style.height = burstDOM.style.width = burstSize + 'px';
+
+	        // TODO: Static burst class styles
+	        burstDOM.style.background = 'rgba(0,0,0,.09)';
+	        burstDOM.style.borderRadius = '100%';
+	        burstDOM.style.position = 'absolute';
+	        burstDOM.style.zIndex = '1500';
+	        burstDOM.style.transform = 'scale(0)';
+
+	        this.props.settings.burstColor ? burstDOM.style.background = this.props.settings.burstColor : 0;
+
+	        // Attach to paper
+	        baseDOM.appendChild(burstDOM);
+
+	        // Set location
+	        var baseDOMCoords = UtilityMethods.getPosition(baseDOM);
+	        burstDOM.style.top = offsetY - baseDOMCoords.y - burstSize / 2 + 'px';
+	        burstDOM.style.left = offsetX - baseDOMCoords.x - burstSize / 2 + 'px';
+
+	        this._animate(true);
+	    },
+
+	    /** Internal burst creation based off mouse location */
+	    _createBurst: function (e) {
+	        if (!this.props.settings.clickable) return;
+	        e.preventDefault();
+
+	        // Target base nodes
+	        var baseDOM = document.querySelector('.panel-base[data-token="' + this.state.token + '"]');
+	        var oldBurstDOM = document.querySelector('.panel-burst[data-burst-token="' + this.state.token + '"]');
+
+	        // If already exists, remove old and make new.
+	        if (oldBurstDOM) {
+	            oldBurstDOM.remove();
+	        }
+
+	        // Create burst
+	        var burstDOM = document.createElement('span');
+	        burstDOM.className = 'panel-burst';
+	        burstDOM.setAttribute('data-burst-token', this.state.token);
+	        burstDOM.setAttribute('data-native', "true");
+
+	        // Get dimensions to calculate burst size
+	        var largerDimension = baseDOM.offsetHeight > baseDOM.offsetWidth ? baseDOM.offsetHeight : baseDOM.offsetWidth;
+	        var burstSize = largerDimension / 6;
+	        burstDOM.style.height = burstDOM.style.width = burstSize + 'px';
+
+	        // TODO: Static burst class styles
+	        burstDOM.style.background = 'rgba(0,0,0,.09)';
+	        burstDOM.style.borderRadius = '100%';
+	        burstDOM.style.position = 'absolute';
+	        burstDOM.style.zIndex = '1500';
+	        burstDOM.style.transform = 'scale(0)';
+
+	        this.props.settings.burstColor ? burstDOM.style.background = this.props.settings.burstColor : 0;
+
+	        // Attach to paper
+	        baseDOM.appendChild(burstDOM);
+
+	        // Set location
+	        var baseDOMCoords = UtilityMethods.getPosition(baseDOM);
+	        burstDOM.style.top = e.clientY - baseDOMCoords.y - burstSize / 2 + 'px';
+	        burstDOM.style.left = e.clientX - baseDOMCoords.x - burstSize / 2 + 'px';
+
+	        // Lift up
+	        this.props.settings.liftOnClick ? this._liftUp() : 0;
+
+	        this._animate(false);
+	    }
+	};
+
+	module.exports = createBurst;
+
+/***/ },
+/* 172 */
+/***/ function(module, exports) {
+
+	
+	/** @description
+	 * Core utility methods are defined in this file and exported.
+	 */
+	const UtilityMethods = {};
+
+	/** @private
+	 * Performs a shallow extend on target object from source object.
+	 * @param {Object} the object to inherit properties
+	 * @param {Object} the object to supply properties
+	 * @return void
+	 */
+	UtilityMethods.__extend = function (t, s) {
+	  for (var p in s) t[p] = s[p];
+	};
+
+	/** @private
+	 * Performs a weak, shallow extend on target object from source object.
+	 * Properties already defined in the target object will not be overwritten.
+	 * @param {Object} the object to inherit properties
+	 * @param {Object} the object to supply properties
+	 * @return void
+	 */
+	UtilityMethods.__weakExtend = function (t, s) {
+	  for (var p in s) !t.hasOwnProperty(p) ? t[p] = s[p] : 0;
+	};
+
+	/** @private
+	 * Returns a hash of a given string
+	 * @param {string} string to hash
+	 * @return {string} hashed string
+	 */
+	UtilityMethods.hash = function (string) {
+	  var length = Math.floor(Math.random() * 10) + 10;
+	  var mask = '.abcdefghijklmnopqrstuvwxyz';
+	  mask += '.ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+	  mask += '.0123456789';
+	  var result = '';
+	  for (var i = length; i > 0; --i) result += mask[Math.round(Math.random() * (mask.length - 1))];
+	  return result;
+	};
+
+	/** @private
+	 * Gets the absolute coords of a given DOM element.
+	 * @param {DOMElement} element to find coords
+	 * @return {object} object containing x and y coords
+	 */
+	UtilityMethods.getPosition = function (element) {
+	  var xPosition = 0;
+	  var yPosition = 0;
+	  while (element) {
+	    xPosition += element.offsetLeft - element.scrollLeft + element.clientLeft;
+	    yPosition += element.offsetTop + element.clientTop;
+	    element = element.offsetParent;
+	  }
+	  // Account for distance scrolled from top of document
+	  yPosition -= window.scrollY;
+	  return {
+	    x: xPosition,
+	    y: yPosition
+	  };
+	};
+
+	module.exports = UtilityMethods;
+
+/***/ },
+/* 173 */
+/***/ function(module, exports) {
+
+	
+	/** @description
+	 * Handles the behavior for the event of a mouse coming back up on the paper from
+	 * a mousedown state.
+	 *
+	 * @param      {void}
+	 * @return     {void}
+	 *
+	 * @dependency {React.method} _burst
+	 * @dependency {React.prop}   settings
+	 */
+	const onMouseUp = {
+	  _onMouseUp: function () {
+	    if (!this.props.settings.clickable) return;
+
+	    // Lift back down
+	    this.props.settings.liftOnClick ? this._liftDown() : 0;
+
+	    // Burst
+	    this._burst(this.props.settings.burstSpeed);
+	  }
+	};
+
+	module.exports = onMouseUp;
+
+/***/ },
+/* 174 */
+/***/ function(module, exports) {
+
+	
+	/** @description
+	 * If any custom click event was constructed into the instance of paper, we want
+	 * to execute the function it was given.
+	 *
+	 * @param      {void}
+	 * @return     {void}
+	 */
+	const handleClick = {
+	  _handleOnClick: function () {
+	    if (this.props.onClick) {
+	      this.props.onClick(this);
+	    }
+	  }
+	};
+
+	module.exports = handleClick;
+
+/***/ },
+/* 175 */
+/***/ function(module, exports) {
+
+	
+	/** @description
+	 * Handles the process of the burst element "bursting" out and disappearing.
+	 *
+	 * @param      {number}        optional timing parameter to decide the speed the element bursts
+	 * @return     {void}
+	 *
+	 * @dependency {React.state}  token
+	 */
+	const burst = {
+	    _burst: function (timing) {
+	        var burstDOM = document.querySelector('.panel-burst[data-burst-token="' + this.state.token + '"]');
+	        if (!burstDOM) {
+	            return 0;
+	        }
+
+	        // Get base node
+	        var baseDOM = document.querySelector('.panel-base[data-token="' + this.state.token + '"]');
+	        var largerDimension = baseDOM.offsetHeight > baseDOM.offsetWidth ? baseDOM.offsetHeight : baseDOM.offsetWidth;
+	        var baseDimensions = (baseDOM.offsetHeight + baseDOM.offsetWidth) / 2;
+	        var burstDimensions = (burstDOM.offsetHeight + burstDOM.offsetWidth) / 2;
+	        var burstDistance = largerDimension / burstDimensions;
+	        burstDistance *= 1.5;
+
+	        var timing = timing || 1250;
+
+	        // Burst animation
+	        burstDOM.style.transition = 'all ' + timing + 'ms cubic-bezier(0.23, 1, 0.32, 1) 0s';
+	        burstDOM.style.transform = 'scale(' + burstDistance + ')';
+	        burstDOM.style.opacity = '0';
+
+	        // Remove burst element when finished animating
+	        setTimeout(function () {
+	            burstDOM.remove();
+	        }, timing);
+	    }
+	};
+
+	module.exports = burst;
 
 /***/ }
 /******/ ]);
