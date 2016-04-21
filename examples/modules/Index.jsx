@@ -108,6 +108,9 @@ const app = React.createClass({
 
   _handleClick: function(ref){
     var targetPaper = this.refs.navBar;
+
+    // Do a thing..
+    // When thing is done...
     targetPaper.createBurst(0, 0);
   },
 
