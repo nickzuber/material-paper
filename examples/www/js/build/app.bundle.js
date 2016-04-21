@@ -20089,7 +20089,7 @@
 	    height      : '100vh',
 	    width       : '250px',
 	    position    : 'absolute',
-	    left        : 0,
+	    right       : 0,
 	    zIndex      : 1500,
 	    marginLeft  : '-250px' // For animation purposes, we start the menu out of view
 	  },
