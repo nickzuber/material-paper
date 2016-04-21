@@ -6,6 +6,11 @@ Material-Paper is designed to be a malleable, versatile, and responsive componen
 
 ## Installation 
 
+Material-Paper is available as an [npm package](https://www.npmjs.com/package/material-paper).
+
+```
+$ npm install --save material-paper
+```
 
 ## Usage
 
