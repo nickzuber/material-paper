@@ -16,13 +16,13 @@ $ npm install --save material-paper
 
 Material-Paper is simply a React component, so you should be fairly familiar with the [React](https://facebook.github.io/react/) framework before using Material-Paper.
 
-#### Settings
+##### Settings Attribute
 
 While most React components are comprised of an assortment of attributes used for configuration, this can easily make the code feel cluttered messy very quickly. In an attempt to avoid this issue, Material-Paper is configured with a single `settings` attribute, which takes in a parameters of a basic JavaScript object that contains any configuration you choose.
 
 Here is a simple example of Material-Paper using the `settings` attribute to configure any settings:
 
-```
+```javascript
 var paperSettings = {
   background: '#fff',
   style: {
