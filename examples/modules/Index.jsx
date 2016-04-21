@@ -44,7 +44,7 @@ var paperSettings = {
     position    : 'absolute',
     right       : 0,
     zIndex      : 1500,
-    marginLeft  : '-250px' // For animation purposes, we start the menu out of view
+    marginRight : '-250px' // For animation purposes, we start the menu out of view
   },
   overlayColor  : undefined,
   burstSpeed    : undefined,
@@ -101,7 +101,7 @@ const app = React.createClass({
     // Just to animate the side bar menu back into view
     if(typeof document !== 'undefined'){
       setTimeout(function(){
-        document.querySelector('.sideBar').style.marginLeft = '0px';
+        document.querySelector('.sideBar').style.marginRight = '0px';
       }, 50);
     }
   },
