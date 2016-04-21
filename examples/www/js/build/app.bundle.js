@@ -20058,8 +20058,7 @@
 	const React = __webpack_require__(1);
 
 	// Module components
-	const MP = __webpack_require__(167);
-	const Paper = MP.Paper;
+	const Paper = __webpack_require__(167);
 
 	var paperNavSettings = {
 	  background: '#eee',
@@ -20156,9 +20155,7 @@
 
 	  _handleClick: function(ref){
 	    var targetPaper = this.refs.navBar;
-	    setTimeout(function(){
-	      targetPaper.createBurst(0, 0);
-	    }, 200);
+	    targetPaper.createBurst(0, 0);
 	  },
 
 	  render: function(){
@@ -20200,11 +20197,7 @@
 
 	'use strict';
 
-	const Paper = __webpack_require__(168);
-
-	const materialPaper = {};
-
-	materialPaper.Paper = Paper;
+	const materialPaper = __webpack_require__(168);
 
 	exports = module.exports = materialPaper;
 

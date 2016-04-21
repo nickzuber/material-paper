@@ -42,7 +42,7 @@ var paperSettings = {
     height      : '100vh',
     width       : '250px',
     position    : 'absolute',
-    left        : 0,
+    right       : 0,
     zIndex      : 1500,
     marginLeft  : '-250px' // For animation purposes, we start the menu out of view
   },
@@ -108,9 +108,7 @@ const app = React.createClass({
 
   _handleClick: function(ref){
     var targetPaper = this.refs.navBar;
-    setTimeout(function(){
-      targetPaper.createBurst(0, 0);
-    }, 200);
+    targetPaper.createBurst(0, 0);
   },
 
   render: function(){

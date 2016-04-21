@@ -5,10 +5,6 @@
 
 'use strict';
 
-const Paper = require('./lib/paper.js');
-
-const materialPaper = {};
-
-materialPaper.Paper = Paper;
+const materialPaper = require('./lib/paper.js');
 
 exports = module.exports = materialPaper;
