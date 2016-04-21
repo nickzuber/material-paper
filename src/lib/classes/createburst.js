@@ -2,15 +2,14 @@
 const UtilityMethods = require('../utils/methods');
 
 /** @description
- * Handles the process of creating the burst element and expanding it into view.
+ * Handles the process of creating the burst element. This does NOT expand the burst into view.
  * Accounts for both cases where a burst is internally invoked and externally invoked.
- *
- * @param      {Event}         the event that captures data regarding mouse location etc.
- * @param      {number}        optional x coordinate offset for where burst is created relative to container
- * @param      {number}        optional y coordinate offset for where burst is created relative to container
- * @return     {void}
- *
+ * @param      {Event}        the event that captures data regarding mouse location etc.
+ * @param      {number}       optional x coordinate offset for where burst is created relative to container
+ * @param      {number}       optional y coordinate offset for where burst is created relative to container
+ * @return     {void}         void
  * @dependency {React.method} _animate
+ * @dependency {React.method} _liftUp
  * @dependency {React.prop}   settings
  * @dependency {React.state}  token
  */

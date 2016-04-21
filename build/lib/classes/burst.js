@@ -1,10 +1,8 @@
 
 /** @description
  * Handles the process of the burst element "bursting" out and disappearing.
- *
- * @param      {number}        optional timing parameter to decide the speed the element bursts
- * @return     {void}
- *
+ * @param      {number}       optional timing parameter to decide the speed the element bursts
+ * @return     {void}         void
  * @dependency {React.state}  token
  */
 const burst = {

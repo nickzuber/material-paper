@@ -2,7 +2,6 @@
 /** @description
  * If any custom click event was constructed into the instance of paper, we want
  * to execute the function it was given.
- *
  * @param      {void}
  * @return     {void}
  */

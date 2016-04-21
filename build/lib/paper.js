@@ -9,20 +9,29 @@ const UtilStyles = require('./styles/utils.stl');
 /** Classes */
 const createBurst = require('./classes/createburst');
 const onMouseUp = require('./classes/onmouseup');
+const onMouseOver = require('./classes/onmouseover');
+const onMouseOut = require('./classes/onmouseout');
 const handleClick = require('./classes/handleclick');
 const burst = require('./classes/burst');
+const flagChildren = require('./classes/flagchildren');
+const animate = require('./classes/animate');
+const liftDown = require('./classes/liftdown');
+const liftUp = require('./classes/liftup');
+const setEventHandler = require('./classes/seteventhandler');
 
 /** Utility Methods */
 const UtilityMethods = require('./utils/methods');
 
-const baseClasses = {
+/** Class Declaration */
+const materialPaperClasses = {};
 
+/** Base JSX Related Classes */
+const baseClasses = {
   getDefaultProps: function () {
     return {
       settings: {}
     };
   },
-
   getInitialState: function () {
     return {
       token: undefined,
@@ -30,9 +39,7 @@ const baseClasses = {
       raisedZDepth: undefined
     };
   },
-
   componentDidMount: function () {
-    // Attempt to create a token until we get a unique one
     do {
       var tokenAttempt = UtilityMethods.hash(Math.floor(Date.now() + Math.random() * 21));
     } while (document.querySelector('.panel-base[data-token="' + tokenAttempt + '"]'));
@@ -40,11 +47,9 @@ const baseClasses = {
       token: tokenAttempt
     }, this._flagChildrenNodes);
 
-    // Set a local variable for zDepth incase undefined
     var _zDepth = 'none';
     typeof this.props.settings.zDepth !== 'undefined' ? _zDepth = this.props.settings.zDepth : 0;
 
-    // Set default zDepth
     switch (_zDepth) {
       case '0':
       case 0:
@@ -88,125 +93,9 @@ const baseClasses = {
         });
         break;
     }
-
-    // Set event handler for un-bursting
     this._setEventHandler();
   },
-
-  _flagChildrenNodes: function () {
-    // Assuming that the paper token has been set.
-    // Update children elements with -panel-item flag and also assign it the respective token
-    var childrenLength = document.querySelector('.panel-top-level[data-token="' + this.state.token + '"]').children.length;
-    for (i = 0; i < childrenLength; ++i) {
-      // If we encounter another paper element as a child, we want to exit
-      // We do *not* want to recurse into another paper element and try to make flag it as a child element
-      // Doing so would cause many conflicts
-      if (document.querySelector('.panel-top-level[data-token="' + this.state.token + '"]').children[i].classList.contains('panel-base')) break;
-      document.querySelector('.panel-top-level[data-token="' + this.state.token + '"]').children[i].classList.add('-panel-item');
-      document.querySelector('.panel-top-level[data-token="' + this.state.token + '"]').children[i].setAttribute('data-token', this.state.token);
-    }
-  },
-
-  _setEventHandler: function () {
-    if (!this.props.settings.clickable) return;
-
-    if (typeof window !== 'undefined' && document.body.getAttribute('data-mp-listener-set') === null) {
-      // To avoid setting more than one event listener for material paper, we add a flag
-      // to the body element to let us know that the event listner has been set
-      document.body.setAttribute('data-mp-listener-set', true);
-
-      window.addEventListener('mouseup', function (e) {
-        // Note: if a element is unresolvable and we cannot get a token or id, we
-        //       want to set the variable to null to ensure that they are still
-        //       technically equal to each other, to make sure the if condition
-        //       later down the road will resolve to false.
-
-        // Active burst element
-        var existingBurstDOM = document.querySelector('.panel-burst[data-native]');
-        if (existingBurstDOM) {
-          var existingBurstID = existingBurstDOM.getAttribute('data-burst-token');
-          //console.log('burstID: '+existingBurstID);
-        } else {
-            var existingBurstID = null;
-            //console.log('burstID: '+existingBurstID+' (does not exist)');
-          }
-
-        // Target element
-        var targetElementDOM = e.target;
-        if (e.target.className.indexOf('-panel-item') > -1) {
-          var targetElementToken = targetElementDOM.getAttribute('data-token');
-          //console.log('paperID: '+targetElementToken);
-        } else {
-            var targetElementToken = null;
-            //console.log('paperID: '+targetElementToken+' (not paper element)');
-          }
-
-        // If mouseup on any element that isn't the respective paper element,
-        // we want to unburst the current burst element (if exists)
-        if (existingBurstDOM && existingBurstID !== targetElementToken) {
-          existingBurstDOM.style.transition = 'all 250ms ease';
-          existingBurstDOM.style.transform = 'scale(0)';
-          setTimeout(function () {
-            existingBurstDOM.remove();
-          }, 250);
-        }
-      });
-    }
-  },
-
-  _onMouseOver: function () {
-    // Zoom background if requested
-    if (this.props.settings.zoom) {
-      var backgroundDOM = document.querySelector('.panel-base[data-token="' + this.state.token + '"] .panel-background');
-      backgroundDOM.style.transform = 'scale(1.05)';
-    }
-
-    // Lift up
-    this.props.settings.liftOnHover ? this._liftUp() : 0;
-  },
-
-  _onMouseOut: function () {
-    // Unzoom background if requested
-    if (this.props.settings.zoom) {
-      var backgroundDOM = document.querySelector('.panel-base[data-token="' + this.state.token + '"] .panel-background');
-      backgroundDOM.style.transform = 'scale(1)';
-    }
-    // Lift back down
-    this.props.settings.liftOnHover ? this._liftDown() : 0;
-
-    // Lift back down (onClick)
-    this.props.settings.liftOnClick ? this._liftDown() : 0;
-  },
-
-  _liftUp: function () {
-    var baseDOM = document.querySelector('.panel-base[data-token="' + this.state.token + '"]');
-    baseDOM.style.boxShadow = UtilStyles.zDepth[this.state.raisedZDepth].boxShadow;
-  },
-
-  _liftDown: function () {
-    var baseDOM = document.querySelector('.panel-base[data-token="' + this.state.token + '"]');
-    baseDOM.style.boxShadow = UtilStyles.zDepth[this.state.defaultZDepth].boxShadow;
-  },
-
-  _animate: function (manual) {
-    var burstDOM = document.querySelector('.panel-burst[data-burst-token="' + this.state.token + '"]');
-    if (!burstDOM) {
-      return 0;
-    }
-    var timing = 1000;
-
-    // Burst down animation
-    burstDOM.style.transition = 'all ' + timing + 'ms cubic-bezier(0.23, 1, 0.32, 1) 0s';
-    burstDOM.style.transform = 'scale(1.5)';
-
-    // If manual burst element, we want to burst it right away
-    // and not wait for a mouseup event to trigger burst.
-    manual ? this._burst(this.props.settings.burstSpeed) : 0;
-  },
-
   render: function () {
-
-    // If settings was not declared, quickly define an empty object
     if (!Object.keys(this.props.settings).length && typeof this.state.token !== 'undefined') {
       console.warn('Warning: Paper element initialized without any settings.\n         Unresolved paper token: ' + this.state.token);
     }
@@ -314,16 +203,20 @@ const baseClasses = {
       )
     );
   }
-
 };
 
-const materialPaperClasses = {};
-
 UtilityMethods.__weakExtend(materialPaperClasses, baseClasses);
-UtilityMethods.__weakExtend(materialPaperClasses, onMouseUp);
 UtilityMethods.__weakExtend(materialPaperClasses, createBurst);
 UtilityMethods.__weakExtend(materialPaperClasses, handleClick);
 UtilityMethods.__weakExtend(materialPaperClasses, burst);
+UtilityMethods.__weakExtend(materialPaperClasses, flagChildren);
+UtilityMethods.__weakExtend(materialPaperClasses, animate);
+UtilityMethods.__weakExtend(materialPaperClasses, liftUp);
+UtilityMethods.__weakExtend(materialPaperClasses, liftDown);
+UtilityMethods.__weakExtend(materialPaperClasses, onMouseUp);
+UtilityMethods.__weakExtend(materialPaperClasses, onMouseOut);
+UtilityMethods.__weakExtend(materialPaperClasses, onMouseOver);
+UtilityMethods.__weakExtend(materialPaperClasses, setEventHandler);
 
 const MaterialPaper = React.createClass(materialPaperClasses);
 

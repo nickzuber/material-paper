@@ -2,11 +2,10 @@
 /** @description
  * Handles the behavior for the event of a mouse coming back up on the paper from
  * a mousedown state.
- *
- * @param      {void}
- * @return     {void}
- *
+ * @param      {void}         void
+ * @return     {void}         void
  * @dependency {React.method} _burst
+ * @dependency {React.method} _liftDown
  * @dependency {React.prop}   settings
  */
 const onMouseUp = {
