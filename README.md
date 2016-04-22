@@ -74,7 +74,7 @@ There are an array of possible settings that you can configure within the `setti
  - **liftOnClick** - *boolean* - Whether or not the paper component will change zDepth when it's clicked.
 
  - **zDepth** - *number* - Defines the zDepth of the paper component. The zDepth is the distance the paper component is from the ground of the application.
- 
+
 
 ## Examples
 
@@ -88,10 +88,7 @@ $ cd material-paper
 $ npm run serve
 ```
 
-## Contributing
-
-
 ## License
 [MIT](https://opensource.org/licenses/MIT)
 
-Copyright (c) 2015 Nick Zuber
+Copyright (c) 2016 Nick Zuber
