@@ -2,7 +2,7 @@
 
 >React Components inspired by Google's Material Design.
 
-Material-Paper is designed to be a malleable, versatile, and responsive component for any web application. 
+Material-Paper is designed to be a malleable, versatile, and responsive component for any web application. It acts as a general container that provides responsive and material-like behavior.
 
 ## Installation 
 
@@ -53,8 +53,28 @@ const MyAwesomeReactApp = React.createClass({
 });
 ```
 
-## API Reference
+##### Configuration Options
 
+There are an array of possible settings that you can configure within the `settings` attribute. Here is a list of what they are and what kinds of parameters they expect:
+
+ - **background** - *string* - The background of the paper component; expects some color, image link, etc. If you're trying to set the background to an image, just using the `url` of the image is enough.
+
+ - **style** - *object* - Defines any custom styles to the paper component. The contents of this object is that of any other traditional style object.
+
+ - **overlayColor** - *string* - An overlay color to the paper component. This is exactly what it sounds like; an optional overlay color to the current paper component background.
+
+ - **burstSpeed** - *number* - The speed in which a burst element will perform its bursting animation (ms).
+
+ - **burstColor** - *string* - Defines the color of the burst element. The burst element is a light, translucent gray.
+
+ - **clickable** - *boolean* - Whether or not the paper component can be clicked, or has click related properties. 
+
+ - **liftOnHover** - *boolean* - Whether or not the paper component will change zDepth when it's hovered over.
+
+ - **liftOnClick** - *boolean* - Whether or not the paper component will change zDepth when it's clicked.
+
+ - **zDepth** - *number* - Defines the zDepth of the paper component. The zDepth is the distance the paper component is from the ground of the application.
+ 
 
 ## Examples
 
