@@ -20155,6 +20155,9 @@
 
 	  _handleClick: function(ref){
 	    var targetPaper = this.refs.navBar;
+
+	    // Do a thing..
+	    // When thing is done...
 	    targetPaper.createBurst(0, 0);
 	  },
 
@@ -20225,6 +20228,7 @@
 	const liftDown = __webpack_require__(180);
 	const liftUp = __webpack_require__(181);
 	const setEventHandler = __webpack_require__(182);
+	const componentDidMount = __webpack_require__(183);
 
 	/** Utility Methods */
 	const UtilityMethods = __webpack_require__(172);
@@ -20245,62 +20249,6 @@
 	      defaultZDepth: undefined,
 	      raisedZDepth: undefined
 	    };
-	  },
-	  componentDidMount: function () {
-	    do {
-	      var tokenAttempt = UtilityMethods.hash(Math.floor(Date.now() + Math.random() * 21));
-	    } while (document.querySelector('.panel-base[data-token="' + tokenAttempt + '"]'));
-	    this.setState({
-	      token: tokenAttempt
-	    }, this._flagChildrenNodes);
-
-	    var _zDepth = 'none';
-	    typeof this.props.settings.zDepth !== 'undefined' ? _zDepth = this.props.settings.zDepth : 0;
-
-	    switch (_zDepth) {
-	      case '0':
-	      case 0:
-	        this.setState({
-	          defaultZDepth: 'zero',
-	          raisedZDepth: 'one'
-	        });
-	        break;
-	      case '1':
-	      case 1:
-	        this.setState({
-	          defaultZDepth: 'one',
-	          raisedZDepth: 'two'
-	        });
-	        break;
-	      case '2':
-	      case 2:
-	        this.setState({
-	          defaultZDepth: 'two',
-	          raisedZDepth: 'three'
-	        });
-	        break;
-	      case '3':
-	      case 3:
-	        this.setState({
-	          defaultZDepth: 'three',
-	          raisedZDepth: 'four'
-	        });
-	        break;
-	      case '4':
-	      case 4:
-	        this.setState({
-	          defaultZDepth: 'four',
-	          raisedZDepth: 'four'
-	        });
-	        break;
-	      default:
-	        this.setState({
-	          defaultZDepth: 'none',
-	          raisedZDepth: 'zero'
-	        });
-	        break;
-	    }
-	    this._setEventHandler();
 	  },
 	  render: function () {
 	    if (!Object.keys(this.props.settings).length && typeof this.state.token !== 'undefined') {
@@ -20378,12 +20326,6 @@
 	        UtilityMethods.__extend(baseStyles, UtilStyles.zDepth.none);
 	        break;
 	    }
-
-	    // Update: <a> was swapped for <span> (refering to the element with panel-link class)
-	    //         This was because React throwing errors when trying to nest <a> tags
-	    //         which would occur if the user tried to nest Paper components (which they should be able to do)
-	    //         So this means any link-related paper has to redirect in a customly built way (not a big deal)
-
 	    return React.createElement(
 	      'div',
 	      { 'data-token': this.state.token, style: baseStyles, className: coreClassList },
@@ -20424,6 +20366,7 @@
 	UtilityMethods.__weakExtend(materialPaperClasses, onMouseOut);
 	UtilityMethods.__weakExtend(materialPaperClasses, onMouseOver);
 	UtilityMethods.__weakExtend(materialPaperClasses, setEventHandler);
+	UtilityMethods.__weakExtend(materialPaperClasses, componentDidMount);
 
 	const MaterialPaper = React.createClass(materialPaperClasses);
 
@@ -21041,6 +20984,81 @@
 	};
 
 	module.exports = setEventHandler;
+
+/***/ },
+/* 183 */
+/***/ function(module, exports, __webpack_require__) {
+
+	
+	const UtilityMethods = __webpack_require__(172);
+
+	/** @description
+	 * Invoked when the paper component is initialized; defines the token state and
+	 * the zDepth state.
+	 * @param      {void}         void
+	 * @return     {void}         void
+	 * @dependency {React.method} _setEventHandler
+	 * @dependency {React.prop}   settings
+	 */
+	const componentDidMount = {
+	  componentDidMount: function () {
+	    do {
+	      var tokenAttempt = UtilityMethods.hash(Math.floor(Date.now() + Math.random() * 21));
+	    } while (document.querySelector('.panel-base[data-token="' + tokenAttempt + '"]'));
+	    this.setState({
+	      token: tokenAttempt
+	    }, this._flagChildrenNodes);
+	    var _zDepth = 'none';
+	    typeof this.props.settings.zDepth !== 'undefined' ? _zDepth = this.props.settings.zDepth : 0;
+
+	    switch (_zDepth) {
+	      case '0':
+	      case 0:
+	        this.setState({
+	          defaultZDepth: 'zero',
+	          raisedZDepth: 'one'
+	        });
+	        break;
+	      case '1':
+	      case 1:
+	        this.setState({
+	          defaultZDepth: 'one',
+	          raisedZDepth: 'two'
+	        });
+	        break;
+	      case '2':
+	      case 2:
+	        this.setState({
+	          defaultZDepth: 'two',
+	          raisedZDepth: 'three'
+	        });
+	        break;
+	      case '3':
+	      case 3:
+	        this.setState({
+	          defaultZDepth: 'three',
+	          raisedZDepth: 'four'
+	        });
+	        break;
+	      case '4':
+	      case 4:
+	        this.setState({
+	          defaultZDepth: 'four',
+	          raisedZDepth: 'four'
+	        });
+	        break;
+	      default:
+	        this.setState({
+	          defaultZDepth: 'none',
+	          raisedZDepth: 'zero'
+	        });
+	        break;
+	    }
+	    this._setEventHandler();
+	  }
+	};
+
+	module.exports = componentDidMount;
 
 /***/ }
 /******/ ]);

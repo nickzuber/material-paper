@@ -75,6 +75,8 @@ There are an array of possible settings that you can configure within the `setti
 
  - **zDepth** - *number* - Defines the zDepth of the paper component. The zDepth is the distance the paper component is from the ground of the application.
 
+ - **zoom** - *boolean* - Whether or not the paper component background will slightly zoom when it's hovered over.
+
 
 ## Examples
 

@@ -18,6 +18,7 @@ const animate = require('./classes/animate');
 const liftDown = require('./classes/liftdown');
 const liftUp = require('./classes/liftup');
 const setEventHandler = require('./classes/seteventhandler');
+const componentDidMount = require('./classes/componentdidmount');
 
 /** Utility Methods */
 const UtilityMethods = require('./utils/methods');
@@ -38,62 +39,6 @@ const baseClasses = {
       defaultZDepth: undefined,
       raisedZDepth: undefined
     };
-  },
-  componentDidMount: function () {
-    do {
-      var tokenAttempt = UtilityMethods.hash(Math.floor(Date.now() + Math.random() * 21));
-    } while (document.querySelector('.panel-base[data-token="' + tokenAttempt + '"]'));
-    this.setState({
-      token: tokenAttempt
-    }, this._flagChildrenNodes);
-
-    var _zDepth = 'none';
-    typeof this.props.settings.zDepth !== 'undefined' ? _zDepth = this.props.settings.zDepth : 0;
-
-    switch (_zDepth) {
-      case '0':
-      case 0:
-        this.setState({
-          defaultZDepth: 'zero',
-          raisedZDepth: 'one'
-        });
-        break;
-      case '1':
-      case 1:
-        this.setState({
-          defaultZDepth: 'one',
-          raisedZDepth: 'two'
-        });
-        break;
-      case '2':
-      case 2:
-        this.setState({
-          defaultZDepth: 'two',
-          raisedZDepth: 'three'
-        });
-        break;
-      case '3':
-      case 3:
-        this.setState({
-          defaultZDepth: 'three',
-          raisedZDepth: 'four'
-        });
-        break;
-      case '4':
-      case 4:
-        this.setState({
-          defaultZDepth: 'four',
-          raisedZDepth: 'four'
-        });
-        break;
-      default:
-        this.setState({
-          defaultZDepth: 'none',
-          raisedZDepth: 'zero'
-        });
-        break;
-    }
-    this._setEventHandler();
   },
   render: function () {
     if (!Object.keys(this.props.settings).length && typeof this.state.token !== 'undefined') {
@@ -171,12 +116,6 @@ const baseClasses = {
         UtilityMethods.__extend(baseStyles, UtilStyles.zDepth.none);
         break;
     }
-
-    // Update: <a> was swapped for <span> (refering to the element with panel-link class)
-    //         This was because React throwing errors when trying to nest <a> tags
-    //         which would occur if the user tried to nest Paper components (which they should be able to do)
-    //         So this means any link-related paper has to redirect in a customly built way (not a big deal)
-
     return React.createElement(
       'div',
       { 'data-token': this.state.token, style: baseStyles, className: coreClassList },
@@ -217,6 +156,7 @@ UtilityMethods.__weakExtend(materialPaperClasses, onMouseUp);
 UtilityMethods.__weakExtend(materialPaperClasses, onMouseOut);
 UtilityMethods.__weakExtend(materialPaperClasses, onMouseOver);
 UtilityMethods.__weakExtend(materialPaperClasses, setEventHandler);
+UtilityMethods.__weakExtend(materialPaperClasses, componentDidMount);
 
 const MaterialPaper = React.createClass(materialPaperClasses);
 
