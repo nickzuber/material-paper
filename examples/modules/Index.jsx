@@ -11,7 +11,8 @@
 const React = require('react');
 
 // Module components
-const Paper = require('../../build/index');
+const PaperLocal = require('../../build/index');
+const Paper = require('material-paper');
 
 var paperNavSettings = {
   background: '#eee',

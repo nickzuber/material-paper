@@ -23,6 +23,9 @@ While most React components are comprised of an assortment of attributes used fo
 Here is a simple example of Material-Paper using the `settings` attribute to configure any settings:
 
 ```javascript
+const React = require('react');
+const Paper = require('material-paper');
+
 var paperSettings = {
   background: '#fff',
   style: {

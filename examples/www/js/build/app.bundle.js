@@ -20058,6 +20058,7 @@
 	const React = __webpack_require__(1);
 
 	// Module components
+	//const Paper = require('../../build/index');
 	const Paper = __webpack_require__(167);
 
 	var paperNavSettings = {
