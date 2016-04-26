@@ -20113,7 +20113,7 @@
 	  },
 	  overlayColor : undefined,
 	  burstSpeed   : undefined,
-	  burstColor   : undefined,
+	  burstColor   : '#000',
 	  clickable    : true,
 	  liftOnHover  : false,
 	  liftOnClick  : true,
@@ -23987,8 +23987,9 @@
 
 	        // Get dimensions to calculate burst size
 	        var largerDimension = baseDOM.offsetHeight > baseDOM.offsetWidth ? baseDOM.offsetHeight : baseDOM.offsetWidth;
-	        var burstSize = largerDimension / 6;
-	        burstDOM.style.height = burstDOM.style.width = burstSize + 'px';
+	        var burstSize = Math.floor(largerDimension / 6);
+
+	        burstDOM.style.height = burstDOM.style.width = Math.ceil(burstSize) + 'px';
 
 	        // TODO: Static burst class styles
 	        burstDOM.style.background = 'rgba(0,0,0,.09)';
@@ -24032,8 +24033,8 @@
 
 	        // Get dimensions to calculate burst size
 	        var largerDimension = baseDOM.offsetHeight > baseDOM.offsetWidth ? baseDOM.offsetHeight : baseDOM.offsetWidth;
-	        var burstSize = largerDimension / 6;
-	        burstDOM.style.height = burstDOM.style.width = burstSize + 'px';
+	        var burstSize = Math.floor(largerDimension / 6);
+	        burstDOM.style.height = burstDOM.style.width = Math.ceil(burstSize) + 'px';
 
 	        // TODO: Static burst class styles
 	        burstDOM.style.background = 'rgba(0,0,0,.09)';
@@ -24041,6 +24042,7 @@
 	        burstDOM.style.position = 'absolute';
 	        burstDOM.style.zIndex = '1500';
 	        burstDOM.style.transform = 'scale(0)';
+	        burstDOM.style.WebkitBackfaceVisibility = 'hidden';
 
 	        this.props.settings.burstColor ? burstDOM.style.background = this.props.settings.burstColor : 0;
 
@@ -24267,7 +24269,7 @@
 
 	        // Burst animation
 	        burstDOM.style.transition = 'all ' + timing + 'ms cubic-bezier(0.23, 1, 0.32, 1) 0s';
-	        burstDOM.style.transform = 'scale(' + burstDistance + ')';
+	        burstDOM.style.transform = 'scale(' + Math.ceil(burstDistance) + ')';
 	        burstDOM.style.opacity = '0';
 
 	        // Remove burst element when finished animating

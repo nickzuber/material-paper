@@ -66,7 +66,7 @@ var paperButtonSettings = {
   },
   overlayColor : undefined,
   burstSpeed   : undefined,
-  burstColor   : undefined,
+  burstColor   : '#000',
   clickable    : true,
   liftOnHover  : false,
   liftOnClick  : true,

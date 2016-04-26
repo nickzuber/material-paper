@@ -24,7 +24,7 @@ const burst = {
 
     // Burst animation
     burstDOM.style.transition = 'all '+timing+'ms cubic-bezier(0.23, 1, 0.32, 1) 0s';
-    burstDOM.style.transform = 'scale('+burstDistance+')';
+    burstDOM.style.transform = 'scale('+Math.ceil(burstDistance)+')';
     burstDOM.style.opacity = '0';
 
     // Remove burst element when finished animating
