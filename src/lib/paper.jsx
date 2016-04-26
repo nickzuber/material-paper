@@ -85,6 +85,13 @@ const baseClasses = {
     if(this.props.settings.clickable){
       topLevelStyles.cursor = 'pointer';
     }
+    if(!!this.props.settings.circular){
+      baseStyles.borderRadius = '100%';
+      backgroundProperties.borderRadius = '100%';
+    }
+    if(!!this.props.settings.noBoundaries){
+      baseStyles.overflow = 'visible';
+    }
 
     // Set a local variable for zDepth incase undefined
     var _zDepth = 'none';

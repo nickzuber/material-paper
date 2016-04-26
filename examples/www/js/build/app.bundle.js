@@ -20058,8 +20058,8 @@
 	const React = __webpack_require__(1);
 
 	// Module components
-	const PaperLocal = __webpack_require__(167);
-	const Paper = __webpack_require__(214);
+	const Paper = __webpack_require__(167);
+	const PaperProduction = __webpack_require__(214);
 
 	var paperNavSettings = {
 	  background: '#eee',
@@ -20108,7 +20108,7 @@
 	  style: {
 	    margin     : '10px auto',
 	    display    : 'block',
-	    height     : '50px',
+	    height     : '150px',
 	    width      : '150px'
 	  },
 	  overlayColor : undefined,
@@ -20118,7 +20118,9 @@
 	  liftOnHover  : false,
 	  liftOnClick  : true,
 	  zoom         : false,
-	  zDepth       : 0
+	  zDepth       : 0,
+	  circular      : true,
+	  noBoundaries  : true
 	}
 
 	var menuButtonSettings = {
@@ -20295,6 +20297,13 @@
 	    }
 	    if (this.props.settings.clickable) {
 	      topLevelStyles.cursor = 'pointer';
+	    }
+	    if (!!this.props.settings.circular) {
+	      baseStyles.borderRadius = '100%';
+	      backgroundProperties.borderRadius = '100%';
+	    }
+	    if (!!this.props.settings.noBoundaries) {
+	      baseStyles.overflow = 'visible';
 	    }
 
 	    // Set a local variable for zDepth incase undefined

@@ -60,7 +60,7 @@ const MyAwesomeReactApp = React.createClass({
 
 There are an array of possible settings that you can configure within the `settings` attribute. Here is a list of what they are and what kinds of parameters they expect:
 
- - **background** - *string* - The background of the paper component; expects some color, image link, etc. If you're trying to set the background to an image, just using the `url` of the image is enough.
+ - **background** - *string* - The background of the paper component; expects some color, image link, etc. If you're trying to set the background to an image, just using the format `url('path/to/image.png')`.
 
  - **style** - *object* - Defines any custom styles to the paper component. The contents of this object is that of any other traditional style object.
 
@@ -79,6 +79,10 @@ There are an array of possible settings that you can configure within the `setti
  - **zDepth** - *number* - Defines the zDepth of the paper component. The zDepth is the distance the paper component is from the ground of the application.
 
  - **zoom** - *boolean* - Whether or not the paper component background will slightly zoom when it's hovered over.
+
+ - **noBoundaries** - *boolean* - Whether or not a burst emitted from the paper component can leave the boundaries of the paper component itself and spread into its surroundings.
+
+ - **circular** - *boolean* - Whether or not the paper component will be rounded or rectangular.
 
 
 ## Examples

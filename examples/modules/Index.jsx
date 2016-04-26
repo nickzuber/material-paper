@@ -11,8 +11,8 @@
 const React = require('react');
 
 // Module components
-const PaperLocal = require('../../build/index');
-const Paper = require('material-paper');
+const Paper = require('../../build/index');
+const PaperProduction = require('material-paper');
 
 var paperNavSettings = {
   background: '#eee',
@@ -61,7 +61,7 @@ var paperButtonSettings = {
   style: {
     margin     : '10px auto',
     display    : 'block',
-    height     : '50px',
+    height     : '150px',
     width      : '150px'
   },
   overlayColor : undefined,
@@ -71,7 +71,9 @@ var paperButtonSettings = {
   liftOnHover  : false,
   liftOnClick  : true,
   zoom         : false,
-  zDepth       : 0
+  zDepth       : 0,
+  circular      : true,
+  noBoundaries  : true
 }
 
 var menuButtonSettings = {
