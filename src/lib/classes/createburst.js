@@ -34,7 +34,7 @@ const createBurst = {
     // Get dimensions to calculate burst size
     var largerDimension = (baseDOM.offsetHeight > baseDOM.offsetWidth) ? baseDOM.offsetHeight : baseDOM.offsetWidth;
     var burstSize = largerDimension / 6;
-    burstDOM.style.height = burstDOM.style.width = burstSize+'px';
+    burstDOM.style.height = burstDOM.style.width = Math.ceil(burstSize)+'px';
 
     // TODO: Static burst class styles
     burstDOM.style.background = 'rgba(0,0,0,.09)';
