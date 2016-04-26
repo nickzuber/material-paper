@@ -1,6 +1,6 @@
 {
   "name": "material-paper",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "React Components inspired by Google's Material Design.",
   "main": "build/index.js",
   "scripts": {
