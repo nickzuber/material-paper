@@ -1,7 +1,7 @@
 {
   "name": "material-paper",
   "version": "0.0.7",
-  "description": "React Components inspired by Google's Material Design.",
+  "description": "React Component of paper material inspired by Google's Material Design.",
   "main": "build/index.js",
   "scripts": {
     "build": "babel ./src --out-dir ./build",

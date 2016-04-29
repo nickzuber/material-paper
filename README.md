@@ -1,6 +1,6 @@
 # [material-paper](https://github.com/nickzuber/material-paper)
 
->React Components inspired by Google's Material Design.
+>React Component of paper material inspired by Google's Material Design.
 
 Material-Paper is designed to be a malleable, versatile, and responsive component for any web application. It acts as a general container that provides responsive and material-like behavior.
 
@@ -87,7 +87,7 @@ There are an array of possible settings that you can configure within the `setti
 
 ## Examples
 
-If you want to see Material-Paper in action, feel free to check out one of the examples in the [`/examples`](https://github.com/nickzuber/needle/tree/master/examples) directory. To get the example up and running, all you need to do is build the `jsx` source files and then build/run the example application to test it out.
+If you want to see Material-Paper in action, feel free to check out one of the examples in the [`/examples`](https://github.com/nickzuber/material-paper/tree/master/examples) directory. To get the example up and running, all you need to do is build the `jsx` source files and then build/run the example application to test it out.
 
 The following commands should do the trick:
 
